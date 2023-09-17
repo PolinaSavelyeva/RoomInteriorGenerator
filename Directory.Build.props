@@ -1,0 +1,19 @@
+<Project>
+    <PropertyGroup>
+        <PackageTags>f#, fsharp</PackageTags>
+        <PackageProjectUrl>https://github.com/PolinaSavelyeva/RoomInteriorGenerator</PackageProjectUrl>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile> <!--https://docs.microsoft.com/en-gb/nuget/reference/msbuild-targets#packagereadmefile -->
+        <RepositoryType>git</RepositoryType>
+        <Authors>PolinaSavelyeva</Authors>
+        <RepositoryUrl>https://github.com/PolinaSavelyeva/RoomInteriorGenerator</RepositoryUrl>
+    </PropertyGroup>
+    <PropertyGroup>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="/"/>    
+        <None Include="$(MSBuildThisFileDirectory)LICENSE.md" Pack="true" PackagePath="/"/>    
+    </ItemGroup>
+</Project>
