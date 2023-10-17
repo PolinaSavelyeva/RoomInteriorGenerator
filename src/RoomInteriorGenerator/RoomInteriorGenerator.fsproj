@@ -15,7 +15,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Library.fs" />
+    <Compile Include="DataTable.fs" />
+    <Compile Include="Cell.fs" />
+    <Compile Include="Area.fs" />
+    <Compile Include="PCG.fs" />
+    <Compile Include="Main.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
