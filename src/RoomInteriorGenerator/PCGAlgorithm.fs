@@ -1,4 +1,4 @@
-module RoomInteriorGenerator.InteriorGenerateAlgorithm
+module RoomInteriorGenerator.PCGAlgorithm
 
 open Cell
 open DataTable

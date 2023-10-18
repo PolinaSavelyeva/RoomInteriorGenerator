@@ -1,6 +1,6 @@
 module RoomInteriorGenerator.Area
 
-open InteriorGenerateAlgorithm
+open PCGAlgorithm
 open DataTable
 open System
 open Cell

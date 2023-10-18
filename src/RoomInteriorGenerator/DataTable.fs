@@ -42,7 +42,7 @@ type DataTable<'Value> =
 
     member this.Item
         with get i =
-            if i >= this.Length then
+            if i >= this.Length || i < 0 then
                 failwith "Index out of the range"
             else
                 this.Rows[i]

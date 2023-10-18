@@ -9,9 +9,20 @@
         <ProjectReference Include="../../src/RoomInteriorGenerator/RoomInteriorGenerator.fsproj" />
     </ItemGroup>
         <ItemGroup>
-        <Compile Include="Tests.fs" />
+        <Compile Include="Helper.fs" />
+        <Compile Include="Generators.fs" />
+        <Compile Include="DataTable.fs" />
+        <Compile Include="Cell.fs" />
+        <Compile Include="PCGAlgorithm.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
+        <ItemGroup>
+          <PackageReference Include="Expecto.FsCheck" Version="9.0.4" />
+          <PackageReference Update="Expecto" Version="9.0.4" />
+          <PackageReference Update="YoloDev.Expecto.TestSdk">
+            <Version>0.13.3</Version>
+          </PackageReference>
+        </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
 

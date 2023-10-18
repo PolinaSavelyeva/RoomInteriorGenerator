@@ -34,7 +34,7 @@ type CellGrid =
     member this.Item
         with get (i, j) =
 
-            if i >= this.Length && j >= this.Width then
+            if i >= this.Length && j >= this.Width || i < 0 || j < 0 then
                 failwith "Index out of the range"
             else
                 this.Data[i * this.Width + j]
