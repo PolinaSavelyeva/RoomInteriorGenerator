@@ -5,12 +5,18 @@ open DataTable
 open System
 open Cell
 
-type Area =
+type Area<'Value> =
     // Room's lower left corner must be at (0,0)
     val Length: int
     val Width: int
     val FloorNumber: int
-    val RoomDataTable: DataTable
+    val AreaDataTable: DataTable<'Value>
+
+    new(length, width, floorNumber, areaDataTable) =
+        { Length = length
+          Width = width
+          FloorNumber = floorNumber
+          AreaDataTable = areaDataTable }
 
     member this.MakeCellGrid =
         let _makeCellGrid areaLength areaWidth =
@@ -40,4 +46,4 @@ type Area =
 
     member this.GenerateInterior maximumAmountOfObjects placementFunction =
         this.InitializeIntGenerator
-        |> generateInterior this.MakeCellGrid this.RoomDataTable maximumAmountOfObjects placementFunction
+        |> generateInterior this.MakeCellGrid this.AreaDataTable maximumAmountOfObjects placementFunction

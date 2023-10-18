@@ -1,9 +1,5 @@
 module RoomInteriorGenerator.DataTable
 
-type ObjectName =
-    | Chair
-    | Table
-
 type LeafPlacementRule =
     | LeftTo
     | RightTo
@@ -17,12 +13,10 @@ type NodePlacementRule =
     | AgainstTheWall
     | None
 
-type Rules =
-    | Leaf
-    | Node of list<ObjectName * LeafPlacementRule> * NodePlacementRule
+type Rules = Node of NodePlacementRule
 
-type ObjectInstance =
-    val Instance: obj
+type ObjectInstance<'Value> =
+    val Instance: 'Value
     val ColliderWidth: int
     val ColliderLength: int
 
@@ -31,13 +25,20 @@ type ObjectInstance =
           ColliderWidth = colliderWidth
           ColliderLength = colliderLength }
 
-type DataTableRow =
-    val Name: ObjectName
-    val Instances: list<ObjectInstance>
+type DataTableRow<'Value> =
+    val Name: string
+    val Instances: list<ObjectInstance<'Value>>
     val Rules: Rules
 
-type DataTable =
-    val Rows: array<DataTableRow>
+    new(name, instancesList, rules) =
+        { Name = name
+          Instances = instancesList
+          Rules = rules }
+
+type DataTable<'Value> =
+    val Rows: array<DataTableRow<'Value>>
+
+    new(rowsArray) = { Rows = rowsArray }
 
     member this.Item
         with get i =
