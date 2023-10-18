@@ -1,18 +1,40 @@
 module RoomInteriorGenerator.Cell
 
 type CellStatus =
-    | Occupied
-    | Tentative
     | NonOccupied
+    | AgainstTheWall
+    | Occupied
+
 
 type Cell =
-    val Status: CellStatus
-    val XCoordinate: int
-    val YCoordinate: int
+    val mutable Status: CellStatus
+    val RowIndex: int
+    val ColumnIndex: int
 
-    new (status, row, column) =
-        {
-            Status = status
-            XCoordinate = row
-            YCoordinate = column
-        }
+    new(cellStatus, rowIndex, columnIndex) =
+        { Status = cellStatus
+          RowIndex = rowIndex
+          ColumnIndex = columnIndex }
+
+    member this.MakeOccupied = this.Status <- Occupied
+    member this.IsOccupied = this.Status = Occupied
+    member this.IsAgainstTheWall = this.Status = AgainstTheWall
+    member this.IsNonOccupied = this.Status = NonOccupied
+
+type CellGrid =
+    val Data: array<Cell>
+    val Length: int
+    val Width: int
+
+    new(data, length, width) =
+        { Data = data
+          Length = length
+          Width = width }
+
+    member this.Item
+        with get (i, j) =
+
+            if i >= this.Length && j >= this.Width then
+                failwith "Index out of the range"
+            else
+                this.Data[i * this.Width + j]

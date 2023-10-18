@@ -21,22 +21,29 @@ type Rules =
     | Leaf
     | Node of list<ObjectName * LeafPlacementRule> * NodePlacementRule
 
-type AppearancesNumber =
-    | EqualTo of int
-    | GreaterThanOrEqualTo of int
+type ObjectInstance =
+    val Instance: obj
+    val ColliderWidth: int
+    val ColliderLength: int
+
+    new(instance, colliderWidth, colliderLength) =
+        { Instance = instance
+          ColliderWidth = colliderWidth
+          ColliderLength = colliderLength }
 
 type DataTableRow =
     val Name: ObjectName
-    val Instances: list<obj>
+    val Instances: list<ObjectInstance>
     val Rules: Rules
-    val AppearancesNumber: AppearancesNumber
-    val OccurrenceProbability: float
 
 type DataTable =
     val Rows: array<DataTableRow>
-    member this.GetRules number = 0
-    member this.Instances number = 0
-    member this.AppearancesNumber number = 0
-    member this.OccurrenceProbability number = 0
 
+    member this.Item
+        with get i =
+            if i >= this.Length then
+                failwith "Index out of the range"
+            else
+                this.Rows[i]
 
+    member this.Length = this.Rows.Length

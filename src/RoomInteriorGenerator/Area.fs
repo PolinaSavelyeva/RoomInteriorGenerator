@@ -1,12 +1,43 @@
 module RoomInteriorGenerator.Area
 
-let divideAreaToCells areaLength areaWidth = 0
+open InteriorGenerateAlgorithm
+open DataTable
+open System
+open Cell
 
 type Area =
     // Room's lower left corner must be at (0,0)
     val Length: int
     val Width: int
+    val FloorNumber: int
+    val RoomDataTable: DataTable
 
-    member this.divideToCells =
-        divideAreaToCells this.Length this.Width
-    member this.generateInterior  = this.divideToCells |>
+    member this.MakeCellGrid =
+        let _makeCellGrid areaLength areaWidth =
+
+            let data =
+                Array.init (areaLength * areaWidth) (fun index ->
+                    let i = index / areaLength
+                    let j = index % areaLength
+
+                    if i = 0 || i = areaWidth - 1 || j = 0 || j = areaLength - 1 then
+                        Cell(AgainstTheWall, i, j)
+                    else
+                        Cell(NonOccupied, i, j))
+
+            CellGrid(data, areaLength, areaWidth)
+
+        _makeCellGrid this.Length this.Width
+
+    member this.InitializeIntGenerator =
+
+        let _generateRandomIntNumber seed =
+            let generator = Random(seed)
+
+            fun lowerBound upperBound -> generator.Next(lowerBound, upperBound)
+
+        _generateRandomIntNumber this.FloorNumber
+
+    member this.GenerateInterior maximumAmountOfObjects placementFunction =
+        this.InitializeIntGenerator
+        |> generateInterior this.MakeCellGrid this.RoomDataTable maximumAmountOfObjects placementFunction
