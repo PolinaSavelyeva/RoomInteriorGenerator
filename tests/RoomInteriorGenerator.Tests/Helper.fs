@@ -13,9 +13,9 @@ module DataTable =
     let CouchRow =
         DataTableRow("Couch", [ ObjectInstance("LongCouch", 1, 4) ], Node AgainstTheWall)
 
-    let dataTableLength1 = DataTable([| CouchRow |])
-    let dataTableLength2 = DataTable([| chairRow; tableRow |])
-    let dataTableLength3 = DataTable([| chairRow; tableRow; CouchRow |])
+    let dataTableOfLengthOne = DataTable([| CouchRow |])
+    let dataTableOfLengthTwo = DataTable([| chairRow; tableRow |])
+    let dataTableOfLengthThree = DataTable([| chairRow; tableRow; CouchRow |])
 
 module Cell =
 

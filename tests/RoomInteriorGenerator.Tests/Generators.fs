@@ -4,25 +4,47 @@ open FsCheck
 open RoomInteriorGenerator.Cell
 open RoomInteriorGenerator.DataTable
 
+
+let cellGen =
+    gen {
+        let! rowIndex = Gen.choose (2, 100)
+        let! columnIndex = Gen.choose (2, 100)
+        let! cellStatus = Gen.elements [ NonOccupied; Occupied; CellStatus.AgainstTheWall ]
+        return! Gen.constant (Cell(cellStatus, rowIndex, columnIndex))
+    }
+
 let cellGridGen =
     gen {
         let! length = Gen.choose (2, 100)
         let! width = Gen.choose (2, 100)
-        let! data = Gen.arrayOfLength (length * width) (Gen.elements [ Cell(Occupied, 0, 0); Cell(NonOccupied, 0, 0); Cell(CellStatus.AgainstTheWall, 0, 0) ])
+        let! data = Gen.arrayOfLength (length * width) cellGen
         return! Gen.constant (CellGrid(data, length, width))
+    }
+
+let intObjectInstanceGen =
+    gen {
+        let! instance = Gen.choose (0, 1000)
+        let! colliderWidth = Gen.choose (1, 4)
+        let! colliderLength = Gen.choose (1, 4)
+        return! Gen.constant (ObjectInstance(instance, colliderLength, colliderWidth))
+    }
+
+let rulesGen =
+    gen {
+        let! nodePlacementRule = Gen.elements [ NodePlacementRule.AgainstTheWall; None ]
+        return! Gen.constant (Node nodePlacementRule)
+    }
+
+let intDataTableOfLengthOneRow =
+    gen {
+        let! instancesList = Gen.listOfLength 1 intObjectInstanceGen
+        let! rules = rulesGen
+        return! Gen.constant (DataTableRow("InstanceName", instancesList, rules))
     }
 
 let intDataTableOfLengthOneGen =
     gen {
-        let! colliderWidth = Gen.choose (2, 100)
-        let! colliderLength = Gen.choose (2, 100)
-        let objectInstance = ObjectInstance<int>(0, colliderWidth, colliderLength)
-
-        let! rows =
-            Gen.arrayOfLength
-                1
-                (Gen.elements [ DataTableRow("1", [ objectInstance ], Node AgainstTheWall); DataTableRow("2", [ objectInstance ], Node None); DataTableRow("3", [ objectInstance ], Node None) ])
-
+        let! rows = Gen.arrayOfLength 1 intDataTableOfLengthOneRow
         return! Gen.constant (DataTable<int>(rows))
     }
 
