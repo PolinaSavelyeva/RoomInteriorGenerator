@@ -21,6 +21,10 @@ let cellGridGen =
         return! Gen.constant (CellGrid(data, length, width))
     }
 
+type DataTableOfLengthOne<'Value> =
+    val Data: DataTable<'Value>
+    new(data) = { Data = data }
+
 let intObjectInstanceGen =
     gen {
         let! instance = Gen.choose (0, 1000)
@@ -35,7 +39,7 @@ let rulesGen =
         return! Gen.constant (Node nodePlacementRule)
     }
 
-let intDataTableOfLengthOneRow =
+let intDataTableOfLengthOneRowGen =
     gen {
         let! instancesList = Gen.listOfLength 1 intObjectInstanceGen
         let! rules = rulesGen
@@ -44,10 +48,26 @@ let intDataTableOfLengthOneRow =
 
 let intDataTableOfLengthOneGen =
     gen {
-        let! rows = Gen.arrayOfLength 1 intDataTableOfLengthOneRow
-        return! Gen.constant (DataTable<int>(rows))
+        let! rows = Gen.arrayOfLength 1 intDataTableOfLengthOneRowGen
+        return! Gen.constant <| DataTableOfLengthOne(DataTable(rows))
+    }
+
+let intDataTableRowGen =
+    gen {
+        let! length = Gen.choose (1, 1000)
+        let! instancesList = Gen.listOfLength length intObjectInstanceGen
+        let! rules = rulesGen
+        return! Gen.constant (DataTableRow("InstanceName", instancesList, rules))
+    }
+
+let intDataTableGen =
+    gen {
+        let! length = Gen.choose (1, 1000)
+        let! rows = Gen.arrayOfLength length intDataTableRowGen
+        return! Gen.constant (DataTable(rows))
     }
 
 type Generators =
     static member CellGrid() = Arb.fromGen cellGridGen
-    static member DataTable() = Arb.fromGen intDataTableOfLengthOneGen
+    static member DataTable() = Arb.fromGen intDataTableGen
+    static member DataTableOfLengthOne() = Arb.fromGen intDataTableOfLengthOneGen

@@ -47,10 +47,8 @@ module Cell =
 
 module RandomGenerators =
 
-    open System
-
     let generateRandomIntNumber seed =
-        let generator = Random(seed)
+        let generator = System.Random(seed)
         fun lowerBound upperBound -> generator.Next(lowerBound, upperBound)
 
     let randomGeneratorSample = generateRandomIntNumber 99
