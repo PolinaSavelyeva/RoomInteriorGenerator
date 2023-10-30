@@ -10,12 +10,12 @@ module DataTable =
     let tableRow =
         DataTableRow("Table", [ ObjectInstance("DinnerTable", 2, 2); ObjectInstance("OfficeTable", 3, 2) ], Node None)
 
-    let CouchRow =
+    let couchRow =
         DataTableRow("Couch", [ ObjectInstance("LongCouch", 1, 4) ], Node AgainstTheWall)
 
-    let dataTableOfLengthOne = DataTable([| CouchRow |])
+    let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthTwo = DataTable([| chairRow; tableRow |])
-    let dataTableOfLengthThree = DataTable([| chairRow; tableRow; CouchRow |])
+    let dataTableOfLengthThree = DataTable([| chairRow; tableRow; couchRow |])
 
 module Cell =
 
