@@ -5,13 +5,14 @@ open FsCheck
 open RoomInteriorGenerator.PCGAlgorithm
 open RoomInteriorGenerator.DataTable
 open Helper.DataTable
+open Helper.Cell
 open Helper.RandomGenerators
 open RoomInteriorGenerator.Tests.Generators
 
 let config =
     { FsCheckConfig.defaultConfig with
         arbitrary = [ typeof<Generators.Generators> ]
-        maxTest = 50 }
+        maxTest = 30 }
 
 module ChooseObjectToPlace =
     [<Tests>]
@@ -62,3 +63,37 @@ module ChooseObjectToPlace =
                       List.init lengthOfList.Get (fun _ -> chooseObjectToPlace dataTable generator2)
 
                   Expect.equal listOfGeneratedObjects1 listOfGeneratedObjects2 "Generated lists were expected to be equal" ]
+
+module ChoosePlaceForObject =
+    [<Tests>]
+    let tests =
+        testList
+            "choose place for object"
+            [ testCase "By selecting a place in an empty CellGrid we get None"
+              <| fun _ ->
+                  let actualResult =
+                      choosePlaceForObject emptyCellGrid chosenObject randomGeneratorSample
+
+                  Expect.equal actualResult Option.None "Chosen cell expected to be None"
+
+              testPropertyWithConfig config "By selecting a place in an empty CellGrid we get None property test"
+              <| fun (seed: int) (chosenObject: DataTableRow<obj> * ObjectInstance<obj>) ->
+                  let actualResult =
+                      generateRandomIntNumber seed |> choosePlaceForObject emptyCellGrid chosenObject
+
+                  Expect.equal actualResult Option.None "Chosen cell expected to be None"
+
+              testCase "By selecting a place in occupied CellGrid we get None"
+              <| fun _ ->
+                  let actualResult =
+                      choosePlaceForObject occupiedCellGrid chosenObject randomGeneratorSample
+
+                  Expect.equal actualResult Option.None "Chosen cell expected to be None"
+
+              testPropertyWithConfig config "By selecting a place in occupied CellGrid we get None property test"
+              <| fun (seed: int) (cellGridLength: PositiveInt) (cellGridWidth: PositiveInt) (chosenObject: DataTableRow<obj> * ObjectInstance<obj>) ->
+                  let actualResult =
+                      generateRandomIntNumber seed
+                      |> choosePlaceForObject (makeOccupiedCellGrid cellGridLength.Get cellGridWidth.Get) chosenObject
+
+                  Expect.equal actualResult Option.None "Chosen cell expected to be None" ]

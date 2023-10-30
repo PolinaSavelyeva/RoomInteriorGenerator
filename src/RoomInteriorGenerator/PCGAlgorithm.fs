@@ -44,6 +44,7 @@ let choosePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value
             | None -> (fun (cell: Cell) -> if cell.IsNonOccupied then Some cell else Option.None)
 
     let _generateCellIndexes randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
+
         let cell = fittingCellsArray[randomIntGeneratorWithSeed 0 fittingCellsArray.Length]
         cell.RowIndex, cell.ColumnIndex
 
