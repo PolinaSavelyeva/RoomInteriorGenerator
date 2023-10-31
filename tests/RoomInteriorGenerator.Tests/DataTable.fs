@@ -19,6 +19,9 @@ module GettingElementFromDataTable =
               testProperty "Getting an element by an index equal to the DataTable will cause an error on generated int DataTables"
               <| fun (dataTable: DataTable<int>) -> Expect.throws (fun _ -> dataTable[dataTable.Length] |> ignore) "Index out of the range"
 
+              testProperty "Getting an element by an index equal to the DataTable will cause an error on generated bool DataTables"
+              <| fun (dataTable: DataTable<bool>) -> Expect.throws (fun _ -> dataTable[dataTable.Length] |> ignore) "Index out of the range"
+
               testProperty "Getting an element by an index equal to the DataTable will cause an error on generated string DataTables"
               <| fun (dataTable: DataTable<string>) -> Expect.throws (fun _ -> dataTable[dataTable.Length] |> ignore) "Index out of the range"
 
@@ -27,6 +30,9 @@ module GettingElementFromDataTable =
 
               testProperty "Getting an negative index of the DataTable will cause an error on generated int DataTables"
               <| fun (dataTable: DataTable<int>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range"
+
+              testProperty "Getting an negative index of the DataTable will cause an error on generated bool DataTables"
+              <| fun (dataTable: DataTable<bool>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range"
 
               testProperty "Getting an negative index of the DataTable will cause an error on generated string DataTables"
               <| fun (dataTable: DataTable<string>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range" ]
