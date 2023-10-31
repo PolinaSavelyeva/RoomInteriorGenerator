@@ -27,12 +27,14 @@ type ObjectVariant<'Value> =
 
 type DataTableRow<'Value> =
     val Name: string
-    val Instances: list<ObjectVariant<'Value>>
+    val Instances: array<ObjectVariant<'Value>>
+    val LengthOfInstancesArray: int
     val Rules: Rules
 
-    new(name, instancesList, rules) =
+    new(name, instancesArray, rules) =
         { Name = name
-          Instances = instancesList
+          Instances = instancesArray
+          LengthOfInstancesArray = instancesArray.Length
           Rules = rules }
 
 type DataTable<'Value> =

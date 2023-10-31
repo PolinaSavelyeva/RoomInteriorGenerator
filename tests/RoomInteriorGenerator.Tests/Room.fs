@@ -1,7 +1,6 @@
 ﻿module RoomInteriorGenerator.Tests.Room
 
 open Expecto
-open FsCheck
 
 let config =
     { FsCheckConfig.defaultConfig with

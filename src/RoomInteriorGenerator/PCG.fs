@@ -9,30 +9,14 @@ let selectObjectToPlace (dataTable: DataTable<'Value>) =
         let objectToPlace = dataTable[randomIntGeneratorWithSeed 0 dataTable.Length]
 
         let objectToPlaceInstance =
-            List.item (List.length objectToPlace.Instances |> randomIntGeneratorWithSeed 0) objectToPlace.Instances
+            objectToPlace.Instances[(randomIntGeneratorWithSeed 0 objectToPlace.LengthOfInstancesArray)]
 
         objectToPlace, objectToPlaceInstance
 
-let findAvailablePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value> * ObjectVariant<'Value>) =
-
-    let isFitting (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
-        let mutable isFitting = true
-
-        let diameterWidth = instance.ColliderWidth / 2
-
-        let diameterLength = instance.ColliderLength / 2
-
-        for i in cellColumnIndex - diameterLength .. cellColumnIndex + diameterLength do
-            for j in cellRowIndex - diameterWidth .. cellRowIndex + diameterWidth do
-                if cellGrid[i, j].IsOccupied then
-                    isFitting <- false
-
-        isFitting
-
-    let chooseFittingCells predicate = Array.choose predicate cellGrid.Data
+let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTableRow<'Value>, selectedObjectInstance: ObjectVariant<'Value>) =
 
     let makePredicate =
-        match (fst chosenObject).Rules with
+        match selectedObjectRow.Rules with
         | Node(rule) ->
             match rule with
             | NodePlacementRule.AgainstTheWall -> (fun (cell: Cell) -> if cell.IsAgainstTheWall then Some cell else Option.None)
@@ -43,33 +27,49 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow
                     else
                         Option.None)
 
-    let generateCellIndexes randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
-        let cell = fittingCellsArray[randomIntGeneratorWithSeed 0 fittingCellsArray.Length]
+    let selectPotentiallyMatchingCells predicate = Array.choose predicate cellGrid.Data
 
-        cell.RowIndex, cell.ColumnIndex
+    let isCellMatching (instance: ObjectVariant<'Value>) (cell: Cell) (fittingCellsArray: array<Cell>) fittingCellsArrayIndex =
+        let mutable isFitting = true
+
+        let diameterWidth = instance.ColliderWidth / 2
+        let diameterLength = instance.ColliderLength / 2
+
+        let cellColumnIndex = cell.ColumnIndex
+        let cellRowIndex = cell.RowIndex
+
+        for i in cellColumnIndex - diameterLength .. cellColumnIndex + diameterLength do
+            for j in cellRowIndex - diameterWidth .. cellRowIndex + diameterWidth do
+                if cellGrid[i, j].IsOccupied then
+                    //TODO fittingCellsArrayIndex false
+                    isFitting <- false
+
+        isFitting
+
+    let selectCell randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
+        let index = randomIntGeneratorWithSeed 0 fittingCellsArray.Length
+        fittingCellsArray[index], index
 
     fun randomIntGeneratorWithSeed ->
 
-        let fittingCellsArray = chooseFittingCells makePredicate
+        let rec inner fittingCellsArray =
+            let cell, index = selectCell randomIntGeneratorWithSeed fittingCellsArray
+
+            if isCellMatching selectedObjectInstance cell then
+                Some(cell.RowIndex, cell.ColumnIndex)
+            else
+                inner fittingCellsArray
+
+        let fittingCellsArray = selectPotentiallyMatchingCells makePredicate
 
         if Array.isEmpty fittingCellsArray then
             Option.None
         else
-            let mutable continueLooping = true
-            let mutable cellIndexes = (0, 0)
-
-            while continueLooping do
-
-                cellIndexes <- generateCellIndexes randomIntGeneratorWithSeed fittingCellsArray
-
-                if isFitting (snd chosenObject) cellIndexes then
-                    continueLooping <- false
-
-            Some cellIndexes
+            inner fittingCellsArray
 
 let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximumAmountOfObjects: int) placementFunction =
 
-    let _makeOccupied (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
+    let makeOccupied (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
 
         let diameterWidth = instance.ColliderWidth / 2
 
@@ -90,6 +90,6 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
             if place.IsSome then
                 placementFunction object place.Value
-                _makeOccupied (snd object) place.Value
+                makeOccupied (snd object) place.Value
 
                 amountOfObjectsToBePlaced <- amountOfObjectsToBePlaced - 1
