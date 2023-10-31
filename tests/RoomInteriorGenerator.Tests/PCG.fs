@@ -1,6 +1,5 @@
 module RoomInteriorGenerator.Tests.PCG
 
-open System
 open Expecto
 open FsCheck
 open RoomInteriorGenerator.PCG
@@ -13,13 +12,13 @@ let config =
         arbitrary = [ typeof<Generators.Generators> ]
         maxTest = 20 }
 
-module selectObjectToPlace =
+module SelectObjectToPlace =
     open Generators
 
     [<Tests>]
     let tests =
         testList
-            "choose object to place"
+            "select object to place"
             [ testCase "Items selected from DataTable of size one and consisting of one ObjectInstance are the same"
               <| fun _ ->
                   let actualResult = selectObjectToPlace dataTableOfLengthOne randomGeneratorSample
@@ -65,13 +64,13 @@ module selectObjectToPlace =
 
                   Expect.equal listOfGeneratedObjects1 listOfGeneratedObjects2 "Generated lists were expected to be equal" ]
 
-module ChoosePlaceForObject =
+module FindAvailablePlaceForObject =
     open Helper.Cell
 
     [<Tests>]
     let tests =
         testList
-            "choose place for object"
+            "find available place for object"
             [ testCase "By selecting a place in an empty CellGrid we get None"
               <| fun _ ->
                   let actualResult =
@@ -102,21 +101,23 @@ module ChoosePlaceForObject =
                   Expect.equal actualResult Option.None "Chosen cell expected to be None" ]
 
 module GenerateInterior =
-    open Helper.Area
+    open Helper.Cell
+    open Helper.Room
 
     [<Tests>]
     let tests =
         testList
             "generate interior"
-            [ testCase "Room with generated interior with maximum amounts of objects = zero is the same as the previous one"
+            [ testCase "Place with generated interior with maximum amounts of objects = zero is the same as the previous one"
               <| fun _ ->
-                  mainAreaWithDataTableOfLength3.GenerateInterior 0 (placementFunctionForSample1Area ())
+                  generateInterior cellGridOfRoom dataTableOfLengthThree 0 (placementFunctionForSample2Room ()) randomGeneratorSample
 
-                  Expect.equal areaSample1 areaSample1Copy "Room after furnishing did not change"
+                  Expect.equal roomSample2 roomSample2Copy "Place after furnishing did not change"
 
-              testPropertyWithConfig config "Room with generated interior with maximum amounts of objects = zero is the same as the previous one property test"
-              <| fun (area: string[,]) ->
-                  let copyArea = Array2D.copy area
-                  mainAreaWithDataTableOfLength3.GenerateInterior 0 (placementFunctionForSample1Area ())
+              testPropertyWithConfig config "Place with generated interior with maximum amounts of objects = zero is the same as the previous one property test"
+              <| fun (room: string[,]) ->
+                  let placementFunction = placementFunction room
+                  let copyOfRoom = Array2D.copy room
+                  generateInterior cellGridOfRoom dataTableOfLengthThree 0 placementFunction randomGeneratorSample
 
-                  Expect.equal area copyArea "Room after furnishing did not change" ]
+                  Expect.equal room copyOfRoom "Place after furnishing did not change" ]

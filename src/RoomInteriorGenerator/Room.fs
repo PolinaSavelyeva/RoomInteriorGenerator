@@ -10,28 +10,28 @@ type Room<'Value> =
     val Length: int
     val Width: int
     val FloorNumber: int
-    val AreaDataTable: DataTable<'Value>
+    val DataTable: DataTable<'Value>
 
-    new(length, width, floorNumber, areaDataTable) =
+    new(length, width, floorNumber, dataTable) =
         { Length = length
           Width = width
           FloorNumber = floorNumber
-          AreaDataTable = areaDataTable }
+          DataTable = dataTable }
 
     member private this.GenerateCellGrid =
-        let makeCellGrid areaLength areaWidth =
+        let makeCellGrid roomLength roomWidth =
 
             let data =
-                Array.init (areaLength * areaWidth) (fun index ->
-                    let i = index / areaLength
-                    let j = index % areaLength
+                Array.init (roomLength * roomWidth) (fun index ->
+                    let i = index / roomLength
+                    let j = index % roomLength
 
-                    if i = 0 || i = areaWidth - 1 || j = 0 || j = areaLength - 1 then
+                    if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
                         Cell(CellStatus.AgainstTheWall, i, j)
                     else
                         Cell(NonOccupied, i, j))
 
-            CellGrid(data, areaLength, areaWidth)
+            CellGrid(data, roomLength, roomWidth)
 
         makeCellGrid this.Length this.Width
 
@@ -46,4 +46,4 @@ type Room<'Value> =
 
     member this.GenerateInterior maximumAmountOfObjects placementFunction =
         this.SetupRandomIntGenerator
-        |> generateInterior this.GenerateCellGrid this.AreaDataTable maximumAmountOfObjects placementFunction
+        |> generateInterior this.GenerateCellGrid this.DataTable maximumAmountOfObjects placementFunction

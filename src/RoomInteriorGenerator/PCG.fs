@@ -44,8 +44,8 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow
                         Option.None)
 
     let generateCellIndexes randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
-
         let cell = fittingCellsArray[randomIntGeneratorWithSeed 0 fittingCellsArray.Length]
+
         cell.RowIndex, cell.ColumnIndex
 
     fun randomIntGeneratorWithSeed ->

@@ -25,36 +25,36 @@ module Cell =
 
     open RoomInteriorGenerator.Cell
 
-    let makeAreaCellGrid areaLength areaWidth =
+    let makeCellGridOfRoom roomLength roomWidth =
 
         let data =
-            Array.init (areaLength * areaWidth) (fun index ->
-                let i = index / areaLength
-                let j = index % areaLength
+            Array.init (roomLength * roomWidth) (fun index ->
+                let i = index / roomLength
+                let j = index % roomLength
 
-                if i = 0 || i = areaWidth - 1 || j = 0 || j = areaLength - 1 then
+                if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
                     Cell(AgainstTheWall, i, j)
                 else
                     Cell(NonOccupied, i, j))
 
-        CellGrid(data, areaLength, areaWidth)
+        CellGrid(data, roomLength, roomWidth)
 
     let makeCellGrid (cellsStatus: CellStatus) =
-        fun areaLength areaWidth ->
+        fun roomLength roomWidth ->
             let data =
-                Array.init (areaLength * areaWidth) (fun index -> Cell(cellsStatus, index / areaLength, index % areaLength))
+                Array.init (roomLength * roomWidth) (fun index -> Cell(cellsStatus, index / roomLength, index % roomLength))
 
-            CellGrid(data, areaLength, areaWidth)
+            CellGrid(data, roomLength, roomWidth)
 
     let makeOccupiedCellGrid = makeCellGrid Occupied
     let makeNonOccupiedCellGrid = makeCellGrid NonOccupied
 
-    let areaCellGrid = makeAreaCellGrid 101 142
+    let cellGridOfRoom = makeCellGridOfRoom 101 142
     let nonOccupiedCellGridData = makeNonOccupiedCellGrid 300 77
     let occupiedCellGrid = makeOccupiedCellGrid 20 438
-    let emptyCellGrid = makeAreaCellGrid 0 0
+    let emptyCellGrid = makeCellGridOfRoom 0 0
 
-module Area =
+module Room =
     open RoomInteriorGenerator
 
     let widthSample1 = 56
@@ -63,22 +63,22 @@ module Area =
     let widthSample2 = 2
     let lengthSample2 = 2
 
-    let areaSample1 = Array2D.init widthSample1 lengthSample1 (fun _ _ -> "None")
-    let areaSample2 = Array2D.init widthSample2 lengthSample2 (fun _ _ -> "None")
+    let roomSample1 = Array2D.init widthSample1 lengthSample1 (fun _ _ -> "None")
+    let roomSample2 = Array2D.init widthSample2 lengthSample2 (fun _ _ -> "None")
 
-    let areaSample1Copy = Array2D.copy areaSample1
-    let areaSample2Copy = Array2D.copy areaSample2
+    let roomSample1Copy = Array2D.copy roomSample1
+    let roomSample2Copy = Array2D.copy roomSample2
 
-    let mainAreaWithDataTableOfLength3 =
+    let mainRoomWithDataTableOfLength3 =
         Room(widthSample1, lengthSample1, 5, DataTable.dataTableOfLengthThree)
 
-    let mainAreaWithDataTableOfLength1 =
+    let mainRoomWithDataTableOfLength1 =
         Room(widthSample2, lengthSample2, 5, DataTable.dataTableOfLengthOneInstanceOne)
 
-    let areaFullOfFlowerpots =
+    let roomFullOfFlowerpots =
         Array2D.init widthSample2 lengthSample2 (fun _ _ -> "Flowerpot")
 
-    let placementFunction (areaToChange: string[,]) =
+    let placementFunction (roomToChange: string[,]) =
 
         fun (_: DataTable.DataTableRow<string>, instance: DataTable.ObjectVariant<string>) (cellRowIndex, cellColumnIndex) ->
             let diameterWidth = instance.ColliderWidth / 2
@@ -86,10 +86,10 @@ module Area =
 
             for i in cellColumnIndex - diameterLength .. cellColumnIndex + diameterLength do
                 for j in cellRowIndex - diameterWidth .. cellRowIndex + diameterWidth do
-                    areaToChange[i, j] <- instance.Instance
+                    roomToChange[i, j] <- instance.Instance
 
-    let placementFunctionForSample1Area () = placementFunction areaSample1
-    let placementFunctionForSample2Area () = placementFunction areaSample2
+    let placementFunctionForSample1Room () = placementFunction roomSample1
+    let placementFunctionForSample2Room () = placementFunction roomSample2
 
 module RandomGenerators =
 
