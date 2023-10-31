@@ -30,7 +30,7 @@ let intObjectInstanceGen =
         let! instance = Gen.choose (0, 1000)
         let! colliderWidth = Gen.choose (1, 4)
         let! colliderLength = Gen.choose (1, 4)
-        return! Gen.constant (ObjectInstance(instance, colliderLength, colliderWidth))
+        return! Gen.constant (ObjectVariant(instance, colliderLength, colliderWidth))
     }
 
 let rulesGen =

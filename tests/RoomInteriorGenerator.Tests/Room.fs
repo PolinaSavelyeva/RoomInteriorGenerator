@@ -1,4 +1,4 @@
-﻿module RoomInteriorGenerator.Tests.Area
+﻿module RoomInteriorGenerator.Tests.Room
 
 open Expecto
 open FsCheck

@@ -1,11 +1,11 @@
-module RoomInteriorGenerator.Area
+namespace RoomInteriorGenerator
 
-open PCGAlgorithm
 open DataTable
-open System
 open Cell
+open PCG
+open System
 
-type Area<'Value> =
+type Room<'Value> =
     // Room's lower left corner must be at (0,0)
     val Length: int
     val Width: int
@@ -18,8 +18,8 @@ type Area<'Value> =
           FloorNumber = floorNumber
           AreaDataTable = areaDataTable }
 
-    member this.MakeCellGrid =
-        let _makeCellGrid areaLength areaWidth =
+    member private this.GenerateCellGrid =
+        let makeCellGrid areaLength areaWidth =
 
             let data =
                 Array.init (areaLength * areaWidth) (fun index ->
@@ -27,23 +27,23 @@ type Area<'Value> =
                     let j = index % areaLength
 
                     if i = 0 || i = areaWidth - 1 || j = 0 || j = areaLength - 1 then
-                        Cell(AgainstTheWall, i, j)
+                        Cell(CellStatus.AgainstTheWall, i, j)
                     else
                         Cell(NonOccupied, i, j))
 
             CellGrid(data, areaLength, areaWidth)
 
-        _makeCellGrid this.Length this.Width
+        makeCellGrid this.Length this.Width
 
-    member this.InitializeIntGenerator =
+    member private this.SetupRandomIntGenerator =
 
-        let _generateRandomIntNumber seed =
+        let generateRandomIntNumber seed =
             let generator = Random(seed)
 
             fun lowerBound upperBound -> generator.Next(lowerBound, upperBound)
 
-        _generateRandomIntNumber this.FloorNumber
+        generateRandomIntNumber this.FloorNumber
 
     member this.GenerateInterior maximumAmountOfObjects placementFunction =
-        this.InitializeIntGenerator
-        |> generateInterior this.MakeCellGrid this.AreaDataTable maximumAmountOfObjects placementFunction
+        this.SetupRandomIntGenerator
+        |> generateInterior this.GenerateCellGrid this.AreaDataTable maximumAmountOfObjects placementFunction

@@ -13,8 +13,8 @@
         <Compile Include="Generators.fs" />
         <Compile Include="DataTable.fs" />
         <Compile Include="Cell.fs" />
-        <Compile Include="Area.fs" />
-        <Compile Include="PCGAlgorithm.fs" />
+        <Compile Include="Room.fs" />
+        <Compile Include="PCG.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
         <ItemGroup>

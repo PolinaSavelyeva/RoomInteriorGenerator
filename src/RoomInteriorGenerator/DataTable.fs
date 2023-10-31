@@ -15,7 +15,7 @@ type NodePlacementRule =
 
 type Rules = Node of NodePlacementRule
 
-type ObjectInstance<'Value> =
+type ObjectVariant<'Value> =
     val Instance: 'Value
     val ColliderLength: int
     val ColliderWidth: int
@@ -27,7 +27,7 @@ type ObjectInstance<'Value> =
 
 type DataTableRow<'Value> =
     val Name: string
-    val Instances: list<ObjectInstance<'Value>>
+    val Instances: list<ObjectVariant<'Value>>
     val Rules: Rules
 
     new(name, instancesList, rules) =

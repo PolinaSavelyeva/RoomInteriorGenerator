@@ -17,8 +17,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="DataTable.fs" />
     <Compile Include="Cell.fs" />
-    <Compile Include="PCGAlgorithm.fs" />
-    <Compile Include="Area.fs" />
+    <Compile Include="PCG.fs" />
+    <Compile Include="Room.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

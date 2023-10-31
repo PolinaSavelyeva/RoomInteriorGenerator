@@ -1,9 +1,9 @@
-module RoomInteriorGenerator.PCGAlgorithm
+module RoomInteriorGenerator.PCG
 
-open Cell
 open DataTable
+open Cell
 
-let chooseObjectToPlace (dataTable: DataTable<'Value>) =
+let selectObjectToPlace (dataTable: DataTable<'Value>) =
 
     fun randomIntGeneratorWithSeed ->
         let objectToPlace = dataTable[randomIntGeneratorWithSeed 0 dataTable.Length]
@@ -13,9 +13,9 @@ let chooseObjectToPlace (dataTable: DataTable<'Value>) =
 
         objectToPlace, objectToPlaceInstance
 
-let choosePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value> * ObjectInstance<'Value>) =
+let findAvailablePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value> * ObjectVariant<'Value>) =
 
-    let _isFitting (instance: ObjectInstance<'Value>) (cellRowIndex, cellColumnIndex) =
+    let isFitting (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
         let mutable isFitting = true
 
         let diameterWidth = instance.ColliderWidth / 2
@@ -29,28 +29,28 @@ let choosePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value
 
         isFitting
 
-    let _chooseFittingCells predicate = Array.choose predicate cellGrid.Data
+    let chooseFittingCells predicate = Array.choose predicate cellGrid.Data
 
-    let _makePredicate =
+    let makePredicate =
         match (fst chosenObject).Rules with
         | Node(rule) ->
             match rule with
-            | AgainstTheWall ->
+            | NodePlacementRule.AgainstTheWall -> (fun (cell: Cell) -> if cell.IsAgainstTheWall then Some cell else Option.None)
+            | None ->
                 (fun (cell: Cell) ->
-                    if cell.IsAgainstTheWall && cell.IsNonOccupied then
+                    if cell.IsNonOccupied || cell.IsAgainstTheWall then
                         Some cell
                     else
                         Option.None)
-            | None -> (fun (cell: Cell) -> if cell.IsNonOccupied then Some cell else Option.None)
 
-    let _generateCellIndexes randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
+    let generateCellIndexes randomIntGeneratorWithSeed (fittingCellsArray: array<Cell>) =
 
         let cell = fittingCellsArray[randomIntGeneratorWithSeed 0 fittingCellsArray.Length]
         cell.RowIndex, cell.ColumnIndex
 
     fun randomIntGeneratorWithSeed ->
 
-        let fittingCellsArray = _chooseFittingCells _makePredicate
+        let fittingCellsArray = chooseFittingCells makePredicate
 
         if Array.isEmpty fittingCellsArray then
             Option.None
@@ -60,17 +60,16 @@ let choosePlaceForObject (cellGrid: CellGrid) (chosenObject: DataTableRow<'Value
 
             while continueLooping do
 
-                cellIndexes <- _generateCellIndexes randomIntGeneratorWithSeed fittingCellsArray
+                cellIndexes <- generateCellIndexes randomIntGeneratorWithSeed fittingCellsArray
 
-                if _isFitting (snd chosenObject) cellIndexes then
+                if isFitting (snd chosenObject) cellIndexes then
                     continueLooping <- false
 
             Some cellIndexes
 
-
 let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximumAmountOfObjects: int) placementFunction =
 
-    let _makeOccupied (instance: ObjectInstance<'Value>) (cellRowIndex, cellColumnIndex) =
+    let _makeOccupied (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
 
         let diameterWidth = instance.ColliderWidth / 2
 
@@ -86,8 +85,8 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
         while amountOfObjectsToBePlaced <> 0 do
 
-            let object = chooseObjectToPlace dataTable randomIntGeneratorWithSeed
-            let place = choosePlaceForObject cellGrid object randomIntGeneratorWithSeed
+            let object = selectObjectToPlace dataTable randomIntGeneratorWithSeed
+            let place = findAvailablePlaceForObject cellGrid object randomIntGeneratorWithSeed
 
             if place.IsSome then
                 placementFunction object place.Value

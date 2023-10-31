@@ -5,7 +5,6 @@ type CellStatus =
     | AgainstTheWall
     | Occupied
 
-
 type Cell =
     val mutable Status: CellStatus
     val RowIndex: int
