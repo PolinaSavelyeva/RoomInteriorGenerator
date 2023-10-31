@@ -18,11 +18,15 @@ module DataTable =
     let intRow =
         DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall)
 
+    let floatRow =
+        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall)
+
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
     let dataTableOfLengthTwo = DataTable([| chairRow; tableRow |])
     let dataTableOfLengthThree = DataTable([| chairRow; tableRow; couchRow |])
     let intDataTable = DataTable([| intRow; intRow; intRow; intRow |])
+    let floatDataTable = DataTable([| floatRow; floatRow |])
 
     let chosenObject = couchRow, ObjectVariant("LongCouch", 1, 4, 4, 1)
 
@@ -71,10 +75,12 @@ module Room =
     let roomSample1 = Array2D.init widthSample1 lengthSample1 (fun _ _ -> "None")
     let roomSample2 = Array2D.init widthSample2 lengthSample2 (fun _ _ -> "None")
     let roomSampleInt = Array2D.init widthSample2 lengthSample2 (fun _ _ -> 0)
+    let roomSampleFloat = Array2D.init widthSample2 lengthSample2 (fun _ _ -> 0.0)
 
     let roomSample1Copy = Array2D.copy roomSample1
     let roomSample2Copy = Array2D.copy roomSample2
     let roomSampleIntCopy = Array2D.copy roomSampleInt
+    let roomSampleFloatCopy = Array2D.copy roomSampleFloat
 
     let mainRoomWithDataTableOfLength3 =
         Room(widthSample1, lengthSample1, 5, DataTable.dataTableOfLengthThree)
@@ -84,6 +90,9 @@ module Room =
 
     let mainRoomWithIntDataTable =
         Room(widthSample2, lengthSample2, 5, DataTable.intDataTable)
+
+    let mainRoomWithFloatDataTable =
+        Room(widthSample2, lengthSample2, 5, DataTable.floatDataTable)
 
     let roomFullOfFlowerpots =
         Array2D.init widthSample2 lengthSample2 (fun _ _ -> "Flowerpot")
@@ -99,6 +108,7 @@ module Room =
     let placementFunctionForSample1Room () = placementFunction roomSample1
     let placementFunctionForSample2Room () = placementFunction roomSample2
     let placementFunctionForIntSample () = placementFunction roomSampleInt
+    let placementFunctionForFloatSample () = placementFunction roomSampleFloat
 
 module RandomGenerators =
 

@@ -35,4 +35,7 @@ module GettingElementFromDataTable =
               <| fun (dataTable: DataTable<bool>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range"
 
               testProperty "Getting an negative index of the DataTable will cause an error on generated string DataTables"
-              <| fun (dataTable: DataTable<string>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range" ]
+              <| fun (dataTable: DataTable<string>) (negativeInt: NegativeInt) -> Expect.throws (fun _ -> dataTable[negativeInt.Get] |> ignore) "Index out of the range"
+
+              testCase "Getting an element by an 0 index of non-empty DataTable will return the element"
+              <| fun _ -> Expect.equal (dataTableOfLengthThree[0]) chairRow "The element at index 0 should be chairRow" ]

@@ -39,4 +39,10 @@ module GenerateInterior =
                   let copyOfRoom = Array2D.copy room
                   mainRoomWithIntDataTable.GenerateInterior 0 placementFunction
 
-                  Expect.equal room copyOfRoom "Room after furnishing did not change" ]
+                  Expect.equal room copyOfRoom "Room after furnishing did not change"
+
+              testCase "Room with generated interior with maximum amounts of objects = zero is the same as the previous one (float)"
+              <| fun _ ->
+                  mainRoomWithFloatDataTable.GenerateInterior 0 (placementFunctionForFloatSample ())
+
+                  Expect.equal roomSampleFloat roomSampleFloatCopy "Room after furnishing did not change" ]
