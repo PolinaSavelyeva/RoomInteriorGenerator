@@ -15,6 +15,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Helper.fs" />
     <Compile Include="DataTable.fs" />
     <Compile Include="Cell.fs" />
     <Compile Include="PCG.fs" />

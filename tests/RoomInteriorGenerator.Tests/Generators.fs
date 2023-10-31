@@ -28,9 +28,12 @@ type DataTableOfLengthOne<'Value> =
 let intObjectInstanceGen =
     gen {
         let! instance = Gen.choose (0, 1000)
-        let! colliderWidth = Gen.choose (1, 4)
-        let! colliderLength = Gen.choose (1, 4)
-        return! Gen.constant (ObjectVariant(instance, colliderLength, colliderWidth))
+        let! freeCellsOnTheRight = Gen.choose (1, 4)
+        let! freeCellsOnTheLeft = Gen.choose (1, 4)
+        let! freeCellsOnTheTop = Gen.choose (1, 4)
+        let! freeCellsOnTheBottom = Gen.choose (1, 4)
+
+        return! Gen.constant (ObjectVariant(instance, freeCellsOnTheRight, freeCellsOnTheLeft, freeCellsOnTheTop, freeCellsOnTheBottom))
     }
 
 let rulesGen =
@@ -41,9 +44,9 @@ let rulesGen =
 
 let intDataTableOfLengthOneRowGen =
     gen {
-        let! instancesList = Gen.listOfLength 1 intObjectInstanceGen
+        let! instancesArray = Gen.arrayOfLength 1 intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesList, rules))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules))
     }
 
 let intDataTableOfLengthOneGen =
@@ -55,9 +58,9 @@ let intDataTableOfLengthOneGen =
 let intDataTableRowGen =
     gen {
         let! length = Gen.choose (1, 1000)
-        let! instancesList = Gen.listOfLength length intObjectInstanceGen
+        let! instancesArray = Gen.arrayOfLength length intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesList, rules))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules))
     }
 
 let intDataTableGen =

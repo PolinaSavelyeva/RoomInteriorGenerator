@@ -17,13 +17,17 @@ type Rules = Node of NodePlacementRule
 
 type ObjectVariant<'Value> =
     val Instance: 'Value
-    val ColliderLength: int
-    val ColliderWidth: int
+    val freeCellsOnTheRight: int
+    val freeCellsOnTheLeft: int
+    val freeCellsOnTheTop: int
+    val freeCellsOnTheBottom: int
 
-    new(instance, colliderLength, colliderWidth) =
+    new(instance, left, right, top, bottom) =
         { Instance = instance
-          ColliderLength = colliderLength
-          ColliderWidth = colliderWidth }
+          freeCellsOnTheRight = left
+          freeCellsOnTheLeft = right
+          freeCellsOnTheTop = top
+          freeCellsOnTheBottom = bottom }
 
 type DataTableRow<'Value> =
     val Name: string

@@ -4,19 +4,19 @@ module DataTable =
     open RoomInteriorGenerator.DataTable
 
     let chairRow =
-        DataTableRow("Chair", [ ObjectVariant("WhiteChair", 1, 1); ObjectVariant("BlackChair", 1, 1) ], Node None)
+        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None)
 
     let flowerpotRow =
-        DataTableRow("Flowerpot", [ ObjectVariant("Flowerpot", 1, 1) ], Node None)
+        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 1, 1, 1, 1) |], Node None)
 
     let tableRow =
-        DataTableRow("Table", [ ObjectVariant("DinnerTable", 2, 2); ObjectVariant("OfficeTable", 3, 2) ], Node None)
+        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None)
 
     let couchRow =
-        DataTableRow("Couch", [ ObjectVariant("LongCouch", 1, 4) ], Node AgainstTheWall)
+        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall)
 
     let intRow =
-        DataTableRow("1", [ ObjectVariant(1, 1, 4); ObjectVariant(2, 1, 1) ], Node AgainstTheWall)
+        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall)
 
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
@@ -24,7 +24,7 @@ module DataTable =
     let dataTableOfLengthThree = DataTable([| chairRow; tableRow; couchRow |])
     let intDataTable = DataTable([| intRow; intRow; intRow; intRow |])
 
-    let chosenObject = couchRow, ObjectVariant("LongCouch", 1, 4)
+    let chosenObject = couchRow, ObjectVariant("LongCouch", 1, 4, 4, 1)
 
 module Cell =
 
@@ -91,11 +91,9 @@ module Room =
     let placementFunction (roomToChange: 'Value[,]) =
 
         fun (_: DataTable.DataTableRow<'Value>, instance: DataTable.ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) ->
-            let diameterWidth = instance.ColliderWidth / 2
-            let diameterLength = instance.ColliderLength / 2
 
-            for i in cellColumnIndex - diameterLength .. cellColumnIndex + diameterLength do
-                for j in cellRowIndex - diameterWidth .. cellRowIndex + diameterWidth do
+            for i in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
+                for j in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
                     roomToChange[i, j] <- instance.Instance
 
     let placementFunctionForSample1Room () = placementFunction roomSample1
