@@ -2,7 +2,6 @@ module RoomInteriorGenerator.PCG
 
 open DataTable
 open Cell
-open Helper
 
 let selectObjectToPlace (dataTable: DataTable<'Value>) =
 
@@ -32,47 +31,54 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
         LimitedLengthArray(Array.choose predicate cellGrid.Data)
 
     let isCellMatching (instance: ObjectVariant<'Value>) (cell: Cell) (fittingCellsArray: LimitedLengthArray<Cell>) indexInFittingCellsArray =
-        let mutable isFitting = true
 
         let cellColumnIndex = cell.ColumnIndex
         let cellRowIndex = cell.RowIndex
 
-        for i in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
-            for j in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
-                if cellGrid[i, j].IsOccupied then
-                    fittingCellsArray.Delete indexInFittingCellsArray
-                    isFitting <- false
+        let mutable isFitting = true
+        let mutable loop = true
+
+        while loop do
+            for i in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
+                for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
+                    if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid[i, j].IsOccupied then
+                        fittingCellsArray.Delete indexInFittingCellsArray
+                        loop <- false
+                        isFitting <- false
+
+            loop <- false
 
         isFitting
 
-    let selectCell randomIntGeneratorWithSeed (fittingCellsArray: LimitedLengthArray<Cell>) =
-        // index in fittingCellsArray is not the same as cell.ColumnIndex or cell.RowIndex
-        let indexInFittingCellsArray = randomIntGeneratorWithSeed 0 fittingCellsArray.Length
-        fittingCellsArray[indexInFittingCellsArray], indexInFittingCellsArray
+    let selectCell (fittingCellsArray: LimitedLengthArray<Cell>) =
+        fun randomIntGeneratorWithSeed ->
+            // index in fittingCellsArray is not the same as cell.ColumnIndex or cell.RowIndex
+            let indexInFittingCellsArray = randomIntGeneratorWithSeed 0 fittingCellsArray.Length
+            fittingCellsArray[indexInFittingCellsArray], indexInFittingCellsArray
 
     fun randomIntGeneratorWithSeed ->
 
         let fittingCellsArray = selectPotentiallyMatchingCells makePredicate
 
-        if fittingCellsArray.IsEmpty then
-            Option.None
-        else
-            let rec inner () =
-                let cell, index = selectCell randomIntGeneratorWithSeed fittingCellsArray
+        let rec inner () =
+            if fittingCellsArray.IsEmpty then
+                Option.None
+            else
+                let cell, index = selectCell fittingCellsArray randomIntGeneratorWithSeed
 
                 if isCellMatching selectedObjectInstance cell fittingCellsArray index then
                     Some(cell.RowIndex, cell.ColumnIndex)
                 else
                     inner ()
 
-            inner ()
+        inner ()
 
 let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximumAmountOfObjects: int) placementFunction =
 
     let makeOccupied (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
 
-        for i in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
-            for j in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
+        for i in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
+            for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
                 cellGrid[i, j].MakeOccupied
 
     fun randomIntGeneratorWithSeed ->
@@ -81,12 +87,14 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
             if amountOfObjectsToBePlaced = 0 then
                 ()
             else
-                let object = selectObjectToPlace dataTable randomIntGeneratorWithSeed
-                let place = findAvailablePlaceForObject cellGrid object randomIntGeneratorWithSeed
+                let objectRow, instance = selectObjectToPlace dataTable randomIntGeneratorWithSeed
+
+                let place =
+                    findAvailablePlaceForObject cellGrid (objectRow, instance) randomIntGeneratorWithSeed
 
                 if place.IsSome then
-                    placementFunction object place.Value
-                    makeOccupied (snd object) place.Value
+                    placementFunction (objectRow, instance) place.Value
+                    makeOccupied instance place.Value
 
                     inner (amountOfObjectsToBePlaced - 1)
                 else

@@ -45,4 +45,10 @@ module GenerateInterior =
               <| fun _ ->
                   mainRoomWithFloatDataTable.GenerateInterior 0 (placementFunctionForFloatSample ())
 
-                  Expect.equal roomSampleFloat roomSampleFloatCopy "Room after furnishing did not change" ]
+                  Expect.equal roomSampleFloat roomSampleFloatCopy "Room after furnishing did not change"
+
+              testCase "Room with generated interior with maximum amounts of size 1 objects = length * width of room is filled by them"
+              <| fun _ ->
+                  mainRoomWithDataTableOfLength1.GenerateInterior (widthSample2 * lengthSample2) (placementFunctionForSampleFullOfFlowerpots ())
+
+                  Expect.equal roomSample3 roomSampleFullOfFlowerpots "Room after furnishing filled with flowerpots" ]

@@ -7,7 +7,7 @@ module DataTable =
         DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None)
 
     let flowerpotRow =
-        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 1, 1, 1, 1) |], Node None)
+        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None)
 
     let tableRow =
         DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None)
@@ -69,13 +69,17 @@ module Room =
     let widthSample1 = 56
     let lengthSample1 = 41
 
-    let widthSample2 = 2
-    let lengthSample2 = 2
+    let widthSample2 = 4
+    let lengthSample2 = 4
 
     let roomSample1 = Array2D.init widthSample1 lengthSample1 (fun _ _ -> "None")
     let roomSample2 = Array2D.init widthSample2 lengthSample2 (fun _ _ -> "None")
+    let roomSample3 = Array2D.init widthSample2 lengthSample2 (fun _ _ -> "None")
     let roomSampleInt = Array2D.init widthSample2 lengthSample2 (fun _ _ -> 0)
     let roomSampleFloat = Array2D.init widthSample2 lengthSample2 (fun _ _ -> 0.0)
+
+    let roomSampleFullOfFlowerpots =
+        Array2D.init widthSample2 lengthSample2 (fun _ _ -> "Flowerpot")
 
     let roomSample1Copy = Array2D.copy roomSample1
     let roomSample2Copy = Array2D.copy roomSample2
@@ -83,32 +87,30 @@ module Room =
     let roomSampleFloatCopy = Array2D.copy roomSampleFloat
 
     let mainRoomWithDataTableOfLength3 =
-        Room(widthSample1, lengthSample1, 5, DataTable.dataTableOfLengthThree)
+        Room(lengthSample1, widthSample1, 9, DataTable.dataTableOfLengthThree)
 
     let mainRoomWithDataTableOfLength1 =
-        Room(widthSample2, lengthSample2, 5, DataTable.dataTableOfLengthOneInstanceOne)
+        Room(lengthSample2, widthSample2, 7, DataTable.dataTableOfLengthOneInstanceOne)
 
     let mainRoomWithIntDataTable =
-        Room(widthSample2, lengthSample2, 5, DataTable.intDataTable)
+        Room(lengthSample2, widthSample2, 1, DataTable.intDataTable)
 
     let mainRoomWithFloatDataTable =
-        Room(widthSample2, lengthSample2, 5, DataTable.floatDataTable)
-
-    let roomFullOfFlowerpots =
-        Array2D.init widthSample2 lengthSample2 (fun _ _ -> "Flowerpot")
+        Room(lengthSample2, widthSample2, 2, DataTable.floatDataTable)
 
     let placementFunction (roomToChange: 'Value[,]) =
 
         fun (_: DataTable.DataTableRow<'Value>, instance: DataTable.ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) ->
 
-            for i in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
-                for j in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
+            for i in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
+                for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
                     roomToChange[i, j] <- instance.Instance
 
     let placementFunctionForSample1Room () = placementFunction roomSample1
     let placementFunctionForSample2Room () = placementFunction roomSample2
     let placementFunctionForIntSample () = placementFunction roomSampleInt
     let placementFunctionForFloatSample () = placementFunction roomSampleFloat
+    let placementFunctionForSampleFullOfFlowerpots () = placementFunction roomSample3
 
 module RandomGenerators =
 

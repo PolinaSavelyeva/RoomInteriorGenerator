@@ -1,5 +1,7 @@
 namespace RoomInteriorGenerator.Tests
 
+open Helper.Room
+
 module ExpectoTemplate =
 
     open Expecto
