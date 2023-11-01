@@ -120,4 +120,10 @@ module GenerateInterior =
                   let copyOfRoom = Array2D.copy room
                   generateInterior cellGridOfRoom dataTableOfLengthThree 0 placementFunction randomGeneratorSample
 
-                  Expect.equal room copyOfRoom "Place after furnishing did not change" ]
+                  Expect.equal room copyOfRoom "Place after furnishing did not change"
+
+              testCase "Place with generated interior with maximum amounts of size 1 objects = length * width of room is filled by them"
+              <| fun _ ->
+                  generateInterior cellGridOfRoomForFlowerpots dataTableOfLengthOneInstanceOne (widthSample2 * lengthSample2) (placementFunctionForSampleFullOfFlowerpots ()) randomGeneratorSample
+
+                  Expect.equal roomSample3 roomSampleFullOfFlowerpots "Place after furnishing filled with flowerpots" ]

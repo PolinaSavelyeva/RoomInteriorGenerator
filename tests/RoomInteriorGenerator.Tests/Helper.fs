@@ -59,6 +59,7 @@ module Cell =
     let makeNonOccupiedCellGrid = makeCellGrid NonOccupied
 
     let cellGridOfRoom = makeCellGridOfRoom 101 142
+    let cellGridOfRoomForFlowerpots = makeCellGridOfRoom 4 4
     let nonOccupiedCellGridData = makeNonOccupiedCellGrid 300 77
     let occupiedCellGrid = makeOccupiedCellGrid 20 438
     let emptyCellGrid = makeCellGridOfRoom 0 0
