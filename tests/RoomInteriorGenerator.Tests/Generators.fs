@@ -46,7 +46,7 @@ let intDataTableOfLengthOneRowGen =
     gen {
         let! instancesArray = Gen.arrayOfLength 1 intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, [||]))
     }
 
 let intDataTableOfLengthOneGen =
@@ -60,7 +60,7 @@ let intDataTableRowGen =
         let! length = Gen.choose (1, 1000)
         let! instancesArray = Gen.arrayOfLength length intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, [||]))
     }
 
 let intDataTableGen =

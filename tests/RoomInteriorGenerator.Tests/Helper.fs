@@ -4,22 +4,22 @@ module DataTable =
     open RoomInteriorGenerator.DataTable
 
     let chairRow =
-        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None)
+        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None, [||])
 
     let flowerpotRow =
-        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None)
+        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None, [||])
 
     let tableRow =
-        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None)
+        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, [||])
 
     let couchRow =
-        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall)
+        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, [||])
 
     let intRow =
-        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall)
+        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, [||])
 
     let floatRow =
-        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall)
+        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, [||])
 
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
