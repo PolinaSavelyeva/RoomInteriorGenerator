@@ -137,12 +137,12 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
                         makeOccupiedForChildren instance place.Value maxColliderDimension leafPlacement
 
-                        let place =
+                        let childrenPlace =
                             findAvailablePlaceForObject cellGrid (childRow, childInstance) randomIntGeneratorWithSeed
 
-                        if place.IsSome then
-                            placementFunction (childRow, childInstance) place.Value
-                            makeOccupied childInstance place.Value
+                        if childrenPlace.IsSome then
+                            placementFunction (childRow, childInstance) childrenPlace.Value
+                            makeOccupied childInstance childrenPlace.Value
                             cellGrid.ClearOccupiedForChildrenCells
 
                     inner (amountOfObjectsToBePlaced - 1)
