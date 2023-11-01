@@ -4,6 +4,7 @@ type CellStatus =
     | NonOccupied
     | AgainstTheWall
     | Occupied
+    | OccupiedForChildren
 
 type Cell =
     val mutable Status: CellStatus
@@ -16,9 +17,11 @@ type Cell =
           ColumnIndex = columnIndex }
 
     member this.MakeOccupied = this.Status <- Occupied
+    member this.MakeOccupiedForChildren = this.Status <- OccupiedForChildren
     member this.IsOccupied = this.Status = Occupied
     member this.IsAgainstTheWall = this.Status = AgainstTheWall
     member this.IsNonOccupied = this.Status = NonOccupied
+    member this.IsOccupiedForChildren = this.Status = OccupiedForChildren
 
 type CellGrid =
     val Data: array<Cell>
@@ -37,3 +40,11 @@ type CellGrid =
                 failwith "Index out of the range"
             else
                 this.Data[i * this.Width + j]
+
+    member this.ClearOccupiedForChildrenCells =
+        //TODO
+        Array.iter
+            (fun (cell: Cell) ->
+                if cell.IsOccupiedForChildren then
+                    cell.MakeOccupied)
+            this.Data

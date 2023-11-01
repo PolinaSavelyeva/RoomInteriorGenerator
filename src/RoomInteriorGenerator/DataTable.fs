@@ -3,17 +3,17 @@ module RoomInteriorGenerator.DataTable
 type LeafPlacementRule =
     | LeftTo
     | RightTo
-    | Above
-    | Below
     | Behind
     | InFrontOf
-    | None
+    | Anywhere
 
 type NodePlacementRule =
     | AgainstTheWall
     | None
 
-type Rules = Node of NodePlacementRule
+type Rule =
+    | Node of NodePlacementRule
+    | Leaf of LeafPlacementRule
 
 type ObjectVariant<'Value> =
     val Instance: 'Value
@@ -33,13 +33,15 @@ type DataTableRow<'Value> =
     val Name: string
     val Instances: array<ObjectVariant<'Value>>
     val LengthOfInstancesArray: int
-    val Rules: Rules
+    val PlacementRule: Rule
+    val LeafsTable: array<DataTableRow<'Value>>
 
-    new(name, instancesArray, rules) =
+    new(name, instancesArray, placementRule, leafsArray) =
         { Name = name
           Instances = instancesArray
           LengthOfInstancesArray = instancesArray.Length
-          Rules = rules }
+          PlacementRule = placementRule
+          LeafsTable = leafsArray }
 
 type DataTable<'Value> =
     val Rows: array<DataTableRow<'Value>>

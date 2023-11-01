@@ -16,7 +16,7 @@ let selectObjectToPlace (dataTable: DataTable<'Value>) =
 let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTableRow<'Value>, selectedObjectInstance: ObjectVariant<'Value>) =
 
     let makePredicate =
-        match selectedObjectRow.Rules with
+        match selectedObjectRow.PlacementRule with
         | Node(rule) ->
             match rule with
             | NodePlacementRule.AgainstTheWall -> (fun (cell: Cell) -> if cell.IsAgainstTheWall then Some cell else Option.None)
@@ -26,6 +26,12 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
                         Some cell
                     else
                         Option.None)
+        | Leaf _ ->
+            (fun (cell: Cell) ->
+                if cell.IsOccupiedForChildren then
+                    Some cell
+                else
+                    Option.None)
 
     let selectPotentiallyMatchingCells predicate =
         LimitedLengthArray(Array.choose predicate cellGrid.Data)
@@ -81,6 +87,27 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
             for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
                 cellGrid[i, j].MakeOccupied
 
+    let parseLeafPlacementRule leafPlacementRule =
+        match leafPlacementRule with
+        | Leaf(rule) ->
+            match rule with
+            | LeftTo -> 0, 0, 1, 0
+            | RightTo -> 0, 0, 0, 1
+            | Behind -> 1, 0, 0, 0
+            | InFrontOf -> 0, 1, 0, 0
+            | Anywhere -> 1, 1, 1, 1
+        | _ -> failwith "Leaf were expected here."
+
+    let makeOccupiedForChildren (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) occupyRadius leafPlacement =
+        let top, bottom, left, right = parseLeafPlacementRule leafPlacement
+
+        for i in cellRowIndex - instance.freeCellsOnTheTop - occupyRadius * top .. cellRowIndex + instance.freeCellsOnTheBottom + occupyRadius * bottom do
+            for j in cellColumnIndex - instance.freeCellsOnTheLeft - occupyRadius * left .. cellColumnIndex + instance.freeCellsOnTheRight + occupyRadius * right do
+                if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid[i, j].IsOccupied then
+                    ()
+                else
+                    cellGrid[i, j].MakeOccupiedForChildren
+
     fun randomIntGeneratorWithSeed ->
 
         let rec inner amountOfObjectsToBePlaced =
@@ -95,6 +122,28 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 if place.IsSome then
                     placementFunction (objectRow, instance) place.Value
                     makeOccupied instance place.Value
+
+                    if not (Array.isEmpty objectRow.LeafsTable) then
+
+                        let childRow, childInstance =
+                            selectObjectToPlace (DataTable(objectRow.LeafsTable)) randomIntGeneratorWithSeed
+
+                        let maxColliderDimension =
+                            max childInstance.freeCellsOnTheBottom childInstance.freeCellsOnTheRight
+                            |> max childInstance.freeCellsOnTheLeft
+                            |> max childInstance.freeCellsOnTheTop
+
+                        let leafPlacement = childRow.PlacementRule
+
+                        makeOccupiedForChildren instance place.Value maxColliderDimension leafPlacement
+
+                        let place =
+                            findAvailablePlaceForObject cellGrid (childRow, childInstance) randomIntGeneratorWithSeed
+
+                        if place.IsSome then
+                            placementFunction (childRow, childInstance) place.Value
+                            makeOccupied childInstance place.Value
+                            cellGrid.ClearOccupiedForChildrenCells
 
                     inner (amountOfObjectsToBePlaced - 1)
                 else
