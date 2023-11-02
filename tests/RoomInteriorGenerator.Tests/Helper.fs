@@ -4,22 +4,22 @@ module DataTable =
     open RoomInteriorGenerator.DataTable
 
     let chairRow =
-        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None, [||])
+        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None, Option.None)
 
     let flowerpotRow =
-        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None, [||])
+        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None, Option.None)
 
     let tableRow =
-        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, [||])
+        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, Option.None)
 
     let couchRow =
-        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, [||])
+        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, Option.None)
 
     let intRow =
-        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, [||])
+        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
 
     let floatRow =
-        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, [||])
+        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
 
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
@@ -36,22 +36,21 @@ module Cell =
 
     let makeCellGridOfRoom roomLength roomWidth =
 
-        let data =
+        let (data: array<Cell>) =
             Array.init (roomLength * roomWidth) (fun index ->
                 let i = index / roomLength
                 let j = index % roomLength
 
                 if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
-                    Cell(AgainstTheWall, i, j)
+                    AgainstTheWall
                 else
-                    Cell(NonOccupied, i, j))
+                    NonOccupied)
 
         CellGrid(data, roomLength, roomWidth)
 
     let makeCellGrid (cellsStatus: Cell) =
         fun roomLength roomWidth ->
-            let data =
-                Array.init (roomLength * roomWidth) (fun index -> Cell(cellsStatus, index / roomLength, index % roomLength))
+            let data = Array.init (roomLength * roomWidth) (fun _ -> cellsStatus)
 
             CellGrid(data, roomLength, roomWidth)
 

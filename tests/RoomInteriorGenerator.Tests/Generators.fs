@@ -7,10 +7,8 @@ open RoomInteriorGenerator.DataTable
 
 let cellGen =
     gen {
-        let! rowIndex = Gen.choose (2, 100)
-        let! columnIndex = Gen.choose (2, 100)
-        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall ]
-        return! Gen.constant (Cell(cellStatus, rowIndex, columnIndex))
+        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall; Cell.OccupiedForChildren ]
+        return! Gen.constant cellStatus
     }
 
 let cellGridGen =
@@ -46,7 +44,7 @@ let intDataTableOfLengthOneRowGen =
     gen {
         let! instancesArray = Gen.arrayOfLength 1 intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, [||]))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, Option.None))
     }
 
 let intDataTableOfLengthOneGen =
@@ -60,7 +58,7 @@ let intDataTableRowGen =
         let! length = Gen.choose (1, 1000)
         let! instancesArray = Gen.arrayOfLength length intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, [||]))
+        return! Gen.constant (DataTableRow("InstanceName", instancesArray, rules, Option.None))
     }
 
 let intDataTableGen =
