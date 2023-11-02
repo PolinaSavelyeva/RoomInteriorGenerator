@@ -9,8 +9,7 @@ open Helper.RandomGenerators
 
 let config =
     { FsCheckConfig.defaultConfig with
-        arbitrary = [ typeof<Generators.Generators> ]
-        maxTest = 20 }
+        arbitrary = [ typeof<Generators.Generators> ] }
 
 module SelectObjectToPlace =
     open Generators
@@ -79,7 +78,7 @@ module FindAvailablePlaceForObject =
                   Expect.equal actualResult Option.None "Chosen cell expected to be None"
 
               testPropertyWithConfig config "By selecting a place in an empty CellGrid we get None property test"
-              <| fun (seed: int) (chosenObject: DataTableRow<obj> * ObjectVariant<obj>) ->
+              <| fun (seed: int) (chosenObject: DataTableRow<int> * ObjectVariant<int>) ->
                   let actualResult =
                       generateRandomIntNumber seed |> findAvailablePlaceForObject emptyCellGrid chosenObject
 
@@ -93,12 +92,13 @@ module FindAvailablePlaceForObject =
                   Expect.equal actualResult Option.None "Chosen cell expected to be None"
 
               testPropertyWithConfig config "By selecting a place in occupied CellGrid we get None property test"
-              <| fun (seed: int) (cellGridLength: PositiveInt) (cellGridWidth: PositiveInt) (chosenObject: DataTableRow<obj> * ObjectVariant<obj>) ->
+              <| fun (seed: int) (cellGridLength: PositiveInt) (cellGridWidth: PositiveInt) (chosenObject: DataTableRow<int> * ObjectVariant<int>) ->
                   let actualResult =
                       generateRandomIntNumber seed
                       |> findAvailablePlaceForObject (makeOccupiedCellGrid cellGridLength.Get cellGridWidth.Get) chosenObject
 
                   Expect.equal actualResult Option.None "Chosen cell expected to be None" ]
+
 
 module GenerateInterior =
     open Helper.Cell

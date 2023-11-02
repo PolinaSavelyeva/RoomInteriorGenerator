@@ -18,10 +18,10 @@ module GettingElementFromCellGrid =
               <| fun _ -> Expect.throws (fun _ -> cellGridOfRoom[200, 201] |> ignore) "Index out of the range"
 
               testCase "Getting an element by an index equal to the length of the CellGrid will cause an error"
-              <| fun _ -> Expect.throws (fun _ -> cellGridOfRoom[cellGridOfRoom.Length, cellGridOfRoom.Width] |> ignore) "Index out of the range"
+              <| fun _ -> Expect.throws (fun _ -> cellGridOfRoom[cellGridOfRoom.Width, cellGridOfRoom.Length] |> ignore) "Index out of the range"
 
               testPropertyWithConfig config "Getting an element by an index equal to the CellGrid will cause an error on generated DataTables"
-              <| fun (cellGrid: CellGrid) -> Expect.throws (fun _ -> cellGrid[cellGridOfRoom.Length, cellGridOfRoom.Width] |> ignore) "Index out of the range"
+              <| fun (cellGrid: CellGrid) -> Expect.throws (fun _ -> cellGrid[cellGridOfRoom.Width, cellGridOfRoom.Length] |> ignore) "Index out of the range"
 
               testCase "Getting an negative index of the CellGrid will cause an error"
               <| fun _ -> Expect.throws (fun _ -> cellGridOfRoom[-1, 0] |> ignore) "Index out of the range"

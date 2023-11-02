@@ -137,7 +137,6 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 let leafsTable = objectRow.LeafsTable
 
                 if leafsTable.IsSome && amountOfObjectsToBePlaced <> 1 then
-                    //TODO check
                     let childRow, childInstance =
                         selectObjectToPlace (DataTable(leafsTable.Value)) randomIntGeneratorWithSeed
 
