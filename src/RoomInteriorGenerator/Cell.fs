@@ -16,11 +16,13 @@ type CellGrid =
           Length = length
           Width = width }
 
-    member this.Item (i, j) =
-        if i >= this.Width && j >= this.Length || i < 0 || j < 0 then
-            failwith "Index out of the range"
-        else
-            this.Data[i * this.Length + j]
+    member this.Item
+        with get (i, j) =
+            if i >= this.Width && j >= this.Length || i < 0 || j < 0 then
+                failwith "Index out of the range"
+            else
+                this.Data[i * this.Length + j]
+
     member this.ClearOccupiedForChildrenCells =
         //TODO
         Array.iteri
@@ -30,9 +32,20 @@ type CellGrid =
                 | _ -> ())
             this.Data
 
-    member this.MakeOccupied (i, j) = this[i,j] <- Occupied
-    member this.MakeOccupiedForChildren (i, j) = this[i,j] <- OccupiedForChildren
-    member this.IsOccupied (i, j) = this[i,j] = Occupied
-    member this.IsAgainstTheWall (i, j) = this[i,j] = AgainstTheWall
-    member this.IsNonOccupied (i, j) = this[i,j] = NonOccupied
-    member this.IsOccupiedForChildren (i, j) = this[i,j] = OccupiedForChildren
+    member this.MakeOccupied(i, j) =
+        this.Data[i * this.Length + j] <- Occupied
+
+    member this.MakeOccupiedForChildren(i, j) =
+        this.Data[i * this.Length + j] <- OccupiedForChildren
+
+    member this.IsOccupied(i, j) =
+        this.Data[i * this.Length + j] = Occupied
+
+    member this.IsAgainstTheWall(i, j) =
+        this.Data[i * this.Length + j] = AgainstTheWall
+
+    member this.IsNonOccupied(i, j) =
+        this.Data[i * this.Length + j] = NonOccupied
+
+    member this.IsOccupiedForChildren(i, j) =
+        this.Data[i * this.Length + j] = OccupiedForChildren

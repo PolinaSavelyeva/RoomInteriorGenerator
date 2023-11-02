@@ -19,30 +19,26 @@ type Room<'Value> =
           DataTable = dataTable }
 
     member private this.GenerateCellGrid =
-        let makeCellGrid roomLength roomWidth =
+        let roomLength = this.Length
+        let roomWidth = this.Width
 
-            let data =
-                Array.init (roomLength * roomWidth) (fun index ->
-                    let i = index / roomLength
-                    let j = index % roomLength
+        let data =
+            Array.init (roomLength * roomWidth) (fun index ->
+                let i = index / roomLength
+                let j = index % roomLength
 
-                    if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
-                        AgainstTheWall
-                    else
-                        NonOccupied)
+                if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
+                    AgainstTheWall
+                else
+                    NonOccupied)
 
-            CellGrid(data, roomLength, roomWidth)
-
-        makeCellGrid this.Length this.Width
+        CellGrid(data, roomLength, roomWidth)
 
     member private this.SetupRandomIntGenerator =
 
-        let generateRandomIntNumber seed =
-            let generator = Random(seed)
+        let generator = Random(this.FloorNumber)
 
-            fun lowerBound upperBound -> generator.Next(lowerBound, upperBound)
-
-        generateRandomIntNumber this.FloorNumber
+        fun lowerBound upperBound -> generator.Next(lowerBound, upperBound)
 
     member this.GenerateInterior maximumAmountOfObjects placementFunction =
         this.SetupRandomIntGenerator

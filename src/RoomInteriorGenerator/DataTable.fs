@@ -34,7 +34,7 @@ type DataTableRow<'Value> =
     val Instances: array<ObjectVariant<'Value>>
     val LengthOfInstancesArray: int
     val PlacementRule: Rule
-    val LeafsTable: array<DataTableRow<'Value>>
+    val LeafsTable: array<DataTableRow<'Value>> option
 
     new(name, instancesArray, placementRule, leafsArray) =
         { Name = name
