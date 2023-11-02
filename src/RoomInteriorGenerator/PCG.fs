@@ -19,27 +19,24 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
         match selectedObjectRow.PlacementRule with
         | Node(rule) ->
             match rule with
-            | NodePlacementRule.AgainstTheWall -> (fun (cell: Cell) -> if cell.IsAgainstTheWall then Some cell else Option.None)
+            | NodePlacementRule.AgainstTheWall -> (fun cell -> match cell with
+                                                               | AgainstTheWall -> Some cell
+                                                               | _ -> Option.None)
             | None ->
-                (fun (cell: Cell) ->
-                    if cell.IsNonOccupied || cell.IsAgainstTheWall then
-                        Some cell
-                    else
-                        Option.None)
+                (fun cell ->
+                    match cell with
+                    | NonOccupied | AgainstTheWall -> Some cell
+                    | _ -> Option.None)
         | Leaf _ ->
-            (fun (cell: Cell) ->
-                if cell.IsOccupiedForChildren then
-                    Some cell
-                else
-                    Option.None)
+            (fun cell ->
+                match cell with
+                | OccupiedForChildren -> Some cell
+                | _ -> Option.None)
 
     let selectPotentiallyMatchingCells predicate =
-        LimitedLengthArray(Array.choose predicate cellGrid.Data)
+        LimitedLengthArray(Array. predicate cellGrid.Data)
 
     let isCellMatching (instance: ObjectVariant<'Value>) (cell: Cell) (fittingCellsArray: LimitedLengthArray<Cell>) indexInFittingCellsArray =
-
-        let cellColumnIndex = cell.ColumnIndex
-        let cellRowIndex = cell.RowIndex
 
         let mutable isFitting = true
         let mutable loop = true
@@ -85,7 +82,7 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
         for i in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
             for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
-                cellGrid[i, j].MakeOccupied
+                cellGrid.MakeOccupied(i, j)
 
     let parseLeafPlacementRule leafPlacementRule =
         match leafPlacementRule with
@@ -103,10 +100,10 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
         for i in cellRowIndex - instance.freeCellsOnTheTop - occupyRadius * top .. cellRowIndex + instance.freeCellsOnTheBottom + occupyRadius * bottom do
             for j in cellColumnIndex - instance.freeCellsOnTheLeft - occupyRadius * left .. cellColumnIndex + instance.freeCellsOnTheRight + occupyRadius * right do
-                if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid[i, j].IsOccupied then
+                if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid.IsOccupied(i, j) then
                     ()
                 else
-                    cellGrid[i, j].MakeOccupiedForChildren
+                    cellGrid.MakeOccupiedForChildren(i, j)
 
     fun randomIntGeneratorWithSeed ->
 
@@ -123,10 +120,10 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                     placementFunction (objectRow, instance) place.Value
                     makeOccupied instance place.Value
 
-                    if not (Array.isEmpty objectRow.LeafsTable) then
-
                         let childRow, childInstance =
                             selectObjectToPlace (DataTable(objectRow.LeafsTable)) randomIntGeneratorWithSeed
+
+                        printfn $"111111111111"
 
                         let maxColliderDimension =
                             max childInstance.freeCellsOnTheBottom childInstance.freeCellsOnTheRight

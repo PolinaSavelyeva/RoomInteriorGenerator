@@ -1,27 +1,10 @@
 module RoomInteriorGenerator.Cell
 
-type CellStatus =
+type Cell =
     | NonOccupied
     | AgainstTheWall
     | Occupied
     | OccupiedForChildren
-
-type Cell =
-    val mutable Status: CellStatus
-    val RowIndex: int
-    val ColumnIndex: int
-
-    new(cellStatus, rowIndex, columnIndex) =
-        { Status = cellStatus
-          RowIndex = rowIndex
-          ColumnIndex = columnIndex }
-
-    member this.MakeOccupied = this.Status <- Occupied
-    member this.MakeOccupiedForChildren = this.Status <- OccupiedForChildren
-    member this.IsOccupied = this.Status = Occupied
-    member this.IsAgainstTheWall = this.Status = AgainstTheWall
-    member this.IsNonOccupied = this.Status = NonOccupied
-    member this.IsOccupiedForChildren = this.Status = OccupiedForChildren
 
 type CellGrid =
     val Data: array<Cell>
@@ -33,18 +16,23 @@ type CellGrid =
           Length = length
           Width = width }
 
-    member this.Item
-        with get (i, j) =
-
-            if i >= this.Length && j >= this.Width || i < 0 || j < 0 then
-                failwith "Index out of the range"
-            else
-                this.Data[i * this.Width + j]
-
+    member this.Item (i, j) =
+        if i >= this.Width && j >= this.Length || i < 0 || j < 0 then
+            failwith "Index out of the range"
+        else
+            this.Data[i * this.Length + j]
     member this.ClearOccupiedForChildrenCells =
         //TODO
-        Array.iter
-            (fun (cell: Cell) ->
-                if cell.IsOccupiedForChildren then
-                    cell.MakeOccupied)
+        Array.iteri
+            (fun n (cell: Cell) ->
+                match cell with
+                | OccupiedForChildren -> this.Data[n] <- Occupied
+                | _ -> ())
             this.Data
+
+    member this.MakeOccupied (i, j) = this[i,j] <- Occupied
+    member this.MakeOccupiedForChildren (i, j) = this[i,j] <- OccupiedForChildren
+    member this.IsOccupied (i, j) = this[i,j] = Occupied
+    member this.IsAgainstTheWall (i, j) = this[i,j] = AgainstTheWall
+    member this.IsNonOccupied (i, j) = this[i,j] = NonOccupied
+    member this.IsOccupiedForChildren (i, j) = this[i,j] = OccupiedForChildren

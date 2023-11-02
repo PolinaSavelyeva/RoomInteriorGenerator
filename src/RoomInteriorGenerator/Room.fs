@@ -27,9 +27,9 @@ type Room<'Value> =
                     let j = index % roomLength
 
                     if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
-                        Cell(CellStatus.AgainstTheWall, i, j)
+                        AgainstTheWall
                     else
-                        Cell(NonOccupied, i, j))
+                        NonOccupied)
 
             CellGrid(data, roomLength, roomWidth)
 

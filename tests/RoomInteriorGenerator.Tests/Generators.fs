@@ -9,7 +9,7 @@ let cellGen =
     gen {
         let! rowIndex = Gen.choose (2, 100)
         let! columnIndex = Gen.choose (2, 100)
-        let! cellStatus = Gen.elements [ NonOccupied; Occupied; CellStatus.AgainstTheWall ]
+        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall ]
         return! Gen.constant (Cell(cellStatus, rowIndex, columnIndex))
     }
 

@@ -48,7 +48,7 @@ module Cell =
 
         CellGrid(data, roomLength, roomWidth)
 
-    let makeCellGrid (cellsStatus: CellStatus) =
+    let makeCellGrid (cellsStatus: Cell) =
         fun roomLength roomWidth ->
             let data =
                 Array.init (roomLength * roomWidth) (fun index -> Cell(cellsStatus, index / roomLength, index % roomLength))
