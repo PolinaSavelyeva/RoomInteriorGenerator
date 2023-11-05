@@ -23,37 +23,15 @@ type DataTableOfLengthOne<'Value> =
     val Data: DataTable<'Value>
     new(data) = { Data = data }
 
-let intObjectVariantGen =
+let intObjectInstanceGen =
     gen {
-        let! variant = Gen.choose (0, 100)
+        let! instance = Gen.choose (0, 1000)
         let! freeCellsOnTheRight = Gen.choose (1, 4)
         let! freeCellsOnTheLeft = Gen.choose (1, 4)
         let! freeCellsOnTheTop = Gen.choose (1, 4)
         let! freeCellsOnTheBottom = Gen.choose (1, 4)
 
-        return! Gen.constant (ObjectVariant(variant, freeCellsOnTheRight, freeCellsOnTheLeft, freeCellsOnTheTop, freeCellsOnTheBottom))
-    }
-
-let stringObjectVariantGen =
-    gen {
-        let! variant = Gen.elements [ "addf"; "bsdsd" ]
-        let! freeCellsOnTheRight = Gen.choose (1, 4)
-        let! freeCellsOnTheLeft = Gen.choose (1, 4)
-        let! freeCellsOnTheTop = Gen.choose (1, 4)
-        let! freeCellsOnTheBottom = Gen.choose (1, 4)
-
-        return! Gen.constant (ObjectVariant(variant, freeCellsOnTheRight, freeCellsOnTheLeft, freeCellsOnTheTop, freeCellsOnTheBottom))
-    }
-
-let boolObjectVariantGen =
-    gen {
-        let! variant = Gen.elements [ true; false ]
-        let! freeCellsOnTheRight = Gen.choose (1, 4)
-        let! freeCellsOnTheLeft = Gen.choose (1, 4)
-        let! freeCellsOnTheTop = Gen.choose (1, 4)
-        let! freeCellsOnTheBottom = Gen.choose (1, 4)
-
-        return! Gen.constant (ObjectVariant(variant, freeCellsOnTheRight, freeCellsOnTheLeft, freeCellsOnTheTop, freeCellsOnTheBottom))
+        return! Gen.constant (ObjectVariant(instance, freeCellsOnTheRight, freeCellsOnTheLeft, freeCellsOnTheTop, freeCellsOnTheBottom))
     }
 
 let rulesGen =
@@ -64,23 +42,9 @@ let rulesGen =
 
 let intDataTableOfLengthOneRowGen =
     gen {
-        let! variantsArray = Gen.arrayOfLength 1 intObjectVariantGen
+        let! instancesArray = Gen.arrayOfLength 1 intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
-    }
-
-let stringDataTableOfLengthOneRowGen =
-    gen {
-        let! variantsArray = Gen.arrayOfLength 1 stringObjectVariantGen
-        let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
-    }
-
-let boolDataTableOfLengthOneRowGen =
-    gen {
-        let! variantsArray = Gen.arrayOfLength 1 boolObjectVariantGen
-        let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("InstanceName", Infinity, instancesArray, rules, Option.None))
     }
 
 let intDataTableOfLengthOneGen =
@@ -91,69 +55,20 @@ let intDataTableOfLengthOneGen =
 
 let intDataTableRowGen =
     gen {
-        let! length = Gen.choose (2, 50)
-        let! variantsArray = Gen.arrayOfLength length intObjectVariantGen
+        let! length = Gen.choose (1, 1000)
+        let! instancesArray = Gen.arrayOfLength length intObjectInstanceGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
-    }
-
-let stringDataTableRowGen =
-    gen {
-        let! length = Gen.choose (2, 50)
-        let! variantsArray = Gen.arrayOfLength length stringObjectVariantGen
-        let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
-    }
-
-let boolDataTableRowGen =
-    gen {
-        let! length = Gen.choose (2, 50)
-        let! variantsArray = Gen.arrayOfLength length boolObjectVariantGen
-        let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("InstanceName", Infinity, instancesArray, rules, Option.None))
     }
 
 let intDataTableGen =
     gen {
-        let! length = Gen.choose (2, 50)
+        let! length = Gen.choose (1, 1000)
         let! rows = Gen.arrayOfLength length intDataTableRowGen
         return! Gen.constant (DataTable(rows))
     }
 
-let stringDataTableGen =
-    gen {
-        let! length = Gen.choose (2, 50)
-        let! rows = Gen.arrayOfLength length stringDataTableRowGen
-        return! Gen.constant (DataTable(rows))
-    }
-
-let boolDataTableGen =
-    gen {
-        let! length = Gen.choose (2, 50)
-        let! rows = Gen.arrayOfLength length boolDataTableRowGen
-        return! Gen.constant (DataTable(rows))
-    }
-
-type IntDataTable =
-    val DataTable: DataTable<int>
-    new(data) = { DataTable = data }
-    member this.Length = this.DataTable.Length
-
-type StringDataTable =
-    val DataTable: DataTable<string>
-    new(data) = { DataTable = data }
-    member this.Length = this.DataTable.Length
-
-type BoolDataTable =
-    val DataTable: DataTable<bool>
-    new(data) = { DataTable = data }
-    member this.Length = this.DataTable.Length
-
 type Generators =
     static member CellGrid() = Arb.fromGen cellGridGen
-    static member IntDataTable() = Arb.fromGen intDataTableGen
-    static member StringDataTable() = Arb.fromGen stringDataTableGen
-    static member BoolDataTable() = Arb.fromGen boolDataTableGen
-    static member DataTableRow() = Arb.fromGen intDataTableRowGen
-    static member ObjectVariant() = Arb.fromGen intObjectVariantGen
+    static member DataTable() = Arb.fromGen intDataTableGen
     static member DataTableOfLengthOne() = Arb.fromGen intDataTableOfLengthOneGen

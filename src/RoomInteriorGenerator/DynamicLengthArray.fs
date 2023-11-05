@@ -1,6 +1,6 @@
 namespace RoomInteriorGenerator
 
-type LimitedLengthArray<'Value> =
+type DynamicLengthArray<'Value> =
     val mutable Length: int
     val Data: array<'Value>
 

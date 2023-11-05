@@ -1,25 +1,27 @@
 ﻿module RoomInteriorGenerator.Tests.Helper
 
+open RoomInteriorGenerator
+
 module DataTable =
     open RoomInteriorGenerator.DataTable
 
     let chairRow =
-        DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None, Option.None)
+        DataTableRow("Chair", Infinity, [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1) |], Node None, Option.None)
 
     let flowerpotRow =
-        DataTableRow("Flowerpot", [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None, Option.None)
+        DataTableRow("Flowerpot", Infinity, [| ObjectVariant("Flowerpot", 0, 0, 0, 0) |], Node None, Option.None)
 
     let tableRow =
-        DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, Option.None)
+        DataTableRow("Table", Infinity, [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, Option.None)
 
     let couchRow =
-        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, Option.None)
+        DataTableRow("Couch", Infinity, [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, Option.None)
 
     let intRow =
-        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
+        DataTableRow("1", Infinity, [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
 
     let floatRow =
-        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
+        DataTableRow("1.0", Infinity, [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
 
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
@@ -64,7 +66,6 @@ module Cell =
     let emptyCellGrid = makeCellGridOfRoom 0 0
 
 module Room =
-    open RoomInteriorGenerator
 
     let widthSample1 = 56
     let lengthSample1 = 41
@@ -102,8 +103,8 @@ module Room =
 
         fun (_: DataTable.DataTableRow<'Value>, instance: DataTable.ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) ->
 
-            for i in cellRowIndex - instance.freeCellsOnTheTop .. cellRowIndex + instance.freeCellsOnTheBottom do
-                for j in cellColumnIndex - instance.freeCellsOnTheLeft .. cellColumnIndex + instance.freeCellsOnTheRight do
+            for i in cellRowIndex - instance.FreeCellsOnTheTop .. cellRowIndex + instance.FreeCellsOnTheBottom do
+                for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do
                     roomToChange[i, j] <- instance.Instance
 
     let placementFunctionForSample1Room () = placementFunction roomSample1

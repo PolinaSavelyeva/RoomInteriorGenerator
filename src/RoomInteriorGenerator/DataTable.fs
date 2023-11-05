@@ -17,36 +17,61 @@ type Rule =
 
 type ObjectVariant<'Value> =
     val Instance: 'Value
-    val freeCellsOnTheRight: int
-    val freeCellsOnTheLeft: int
-    val freeCellsOnTheTop: int
-    val freeCellsOnTheBottom: int
+    val FreeCellsOnTheRight: int
+    val FreeCellsOnTheLeft: int
+    val FreeCellsOnTheTop: int
+    val FreeCellsOnTheBottom: int
 
     new(instance, left, right, top, bottom) =
         { Instance = instance
-          freeCellsOnTheRight = left
-          freeCellsOnTheLeft = right
-          freeCellsOnTheTop = top
-          freeCellsOnTheBottom = bottom }
+          FreeCellsOnTheRight = left
+          FreeCellsOnTheLeft = right
+          FreeCellsOnTheTop = top
+          FreeCellsOnTheBottom = bottom }
+
+type MaximumAmount =
+    | Infinity
+    | Finite of int
 
 type DataTableRow<'Value> =
     val Name: string
-    val Instances: array<ObjectVariant<'Value>>
-    val LengthOfInstancesArray: int
+    val mutable MaximumAmount: MaximumAmount
+    val Variants: DynamicLengthArray<ObjectVariant<'Value>>
+    val LengthOfVariantsArray: int
     val PlacementRule: Rule
-    val LeafsTable: array<DataTableRow<'Value>> option
+    val LeafsTable: Option<DynamicLengthArray<DataTableRow<'Value>>>
 
-    new(name, instancesArray, placementRule, leafsArray) =
+    new(name, maximumAmount, instancesDynamicArray, placementRule, leafsArray) =
         { Name = name
-          Instances = instancesArray
-          LengthOfInstancesArray = instancesArray.Length
+          MaximumAmount = maximumAmount
+          Variants = instancesDynamicArray
+          LengthOfVariantsArray = instancesDynamicArray.Length
           PlacementRule = placementRule
           LeafsTable = leafsArray }
 
-type DataTable<'Value> =
-    val Rows: array<DataTableRow<'Value>>
+    new(name, maximumAmount, instancesArray, placementRule, leafsArray: Option<array<DataTableRow<'Value>>>) =
+        { Name = name
+          MaximumAmount = maximumAmount
+          Variants = DynamicLengthArray instancesArray
+          LengthOfVariantsArray = instancesArray.Length
+          PlacementRule = placementRule
+          LeafsTable =
+            if leafsArray.IsNone then
+                Option.None
+            else
+                Some(DynamicLengthArray leafsArray.Value) }
 
-    new(rowsArray) = { Rows = rowsArray }
+type DataTable<'Value> =
+    val Rows: DynamicLengthArray<DataTableRow<'Value>>
+    val mutable Length: int
+
+    new(rowsDynamicLengthArray: DynamicLengthArray<DataTableRow<'Value>>) =
+        { Rows = rowsDynamicLengthArray
+          Length = rowsDynamicLengthArray.Length }
+
+    new(rowsArray: array<DataTableRow<'Value>>) =
+        { Rows = DynamicLengthArray rowsArray
+          Length = rowsArray.Length }
 
     member this.Item
         with get i =
@@ -55,4 +80,22 @@ type DataTable<'Value> =
             else
                 this.Rows[i]
 
-    member this.Length = this.Rows.Length
+    member this.Delete(index: int) =
+        if index < 0 || index >= this.Length then
+            failwith "Index out of the range"
+        else
+            this.Rows.Data[index] <- this.Rows[this.Length - 1]
+            this.Length <- this.Length - 1
+
+    member this.IsEmpty = this.Length = 0
+
+    member this.ReduceMaximumAmount (objectRow: DataTableRow<'Value>) dataTableObjectIndex =
+        match objectRow.MaximumAmount with
+        | Infinity -> ()
+        | Finite n ->
+            objectRow.MaximumAmount <- Finite(n - 1)
+
+            if objectRow.MaximumAmount = Finite 0 then
+                this.Delete dataTableObjectIndex
+            else
+                ()
