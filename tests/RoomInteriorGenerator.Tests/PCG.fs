@@ -6,6 +6,7 @@ open RoomInteriorGenerator.PCG
 open RoomInteriorGenerator.DataTable
 open Helper.DataTable
 open Helper.RandomGenerators
+open RoomInteriorGenerator.Tests.Generators
 
 let config =
     { FsCheckConfig.defaultConfig with
@@ -130,6 +131,24 @@ module GenerateInterior =
 
                   Expect.equal room copyOfRoom "Place after furnishing did not change"
 
+              testPropertyWithConfig config "Place with generated interior with maximum amounts of float objects = zero is the same as the previous one property test"
+              <| fun (room: NormalFloat[,]) ->
+                  let room = Array2D.map (fun (n: NormalFloat) -> n.Get) room
+
+                  let placementFunction = placementFunction room
+                  let copyOfRoom = Array2D.copy room
+                  generateInterior cellGridOfRoom floatDataTable 0 placementFunction randomGeneratorSample
+
+                  Expect.equal room copyOfRoom "Place after furnishing did not change"
+
+              testPropertyWithConfig config "Place with generated interior with maximum amounts of bool objects = zero is the same as the previous one property test"
+              <| fun (room: bool[,]) (boolDataTable: BoolDataTable) ->
+                  let placementFunction = placementFunction room
+                  let copyOfRoom = Array2D.copy room
+                  generateInterior cellGridOfRoom boolDataTable.DataTable 0 placementFunction randomGeneratorSample
+
+                  Expect.equal room copyOfRoom "Place after furnishing did not change"
+
               testCase "Place with generated interior with maximum amounts of size 1 objects = length * width of room is filled by them"
               <| fun _ ->
                   generateInterior cellGridOfRoomForFlowerpots dataTableOfLengthOneInstanceOne (widthSample2 * lengthSample2) (placementFunctionForSampleFullOfFlowerpots ()) randomGeneratorSample
@@ -151,5 +170,16 @@ module GenerateInterior =
                   let copyOfRoom = Array2D.copy room
 
                   generateInterior cellGridOfRoomForFlowerpots intDataTable (widthSample2 * lengthSample2) placementFunction randomGeneratorSample
+
+                  Expect.equal room copyOfRoom "Place after furnishing filled with flowerpots"
+
+              testProperty "Place with generated interior with maximum amounts of size 1 float objects = length * width of room is filled by them property test"
+              <| fun (room: NormalFloat[,]) ->
+                  let room = Array2D.map (fun (n: NormalFloat) -> n.Get) room
+
+                  let placementFunction = placementFunction room
+                  let copyOfRoom = Array2D.copy room
+
+                  generateInterior cellGridOfRoomForFlowerpots floatDataTable (widthSample2 * lengthSample2) placementFunction randomGeneratorSample
 
                   Expect.equal room copyOfRoom "Place after furnishing filled with flowerpots" ]
