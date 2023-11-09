@@ -132,6 +132,7 @@ module GenerateInterior =
               <| fun (room: string[,]) ->
                   let placementFunction = placementFunction room
                   let copyOfRoom = Array2D.copy room
+
                   generateInterior cellGridOfRoomForFlowerpots dataTableOfLengthOneInstanceOne (widthSample2 * lengthSample2) placementFunction randomGeneratorSample
 
                   Expect.equal room copyOfRoom "Place after furnishing filled with flowerpots" ]
