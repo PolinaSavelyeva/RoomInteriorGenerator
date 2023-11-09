@@ -4,7 +4,8 @@ open RoomInteriorGenerator
 
 module DynamicLengthArray =
 
-    let dynamicLengthArray = DynamicLengthArray(Array.init 11 id)
+    let dynamicLengthArraySample1 = DynamicLengthArray(Array.init 11 id)
+    let dynamicLengthArraySample2 = DynamicLengthArray(Array.init 5 id)
 
 module DataTable =
     open RoomInteriorGenerator.DataTable
