@@ -66,21 +66,21 @@ let intDataTableOfLengthOneRowGen =
     gen {
         let! variantsArray = Gen.arrayOfLength 1 intObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let stringDataTableOfLengthOneRowGen =
     gen {
         let! variantsArray = Gen.arrayOfLength 1 stringObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let boolDataTableOfLengthOneRowGen =
     gen {
         let! variantsArray = Gen.arrayOfLength 1 boolObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let intDataTableOfLengthOneGen =
@@ -94,7 +94,7 @@ let intDataTableRowGen =
         let! length = Gen.choose (2, 50)
         let! variantsArray = Gen.arrayOfLength length intObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let stringDataTableRowGen =
@@ -102,7 +102,7 @@ let stringDataTableRowGen =
         let! length = Gen.choose (2, 50)
         let! variantsArray = Gen.arrayOfLength length stringObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let boolDataTableRowGen =
@@ -110,7 +110,7 @@ let boolDataTableRowGen =
         let! length = Gen.choose (2, 50)
         let! variantsArray = Gen.arrayOfLength length boolObjectVariantGen
         let! rules = rulesGen
-        return! Gen.constant (DataTableRow("Name", Infinity, variantsArray, rules, Option.None))
+        return! Gen.constant (DataTableRow("Name", variantsArray, rules, Option.None))
     }
 
 let intDataTableGen =

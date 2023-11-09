@@ -21,7 +21,12 @@ type DynamicLengthArray<'Value> =
         if index < 0 || index >= this.Length then
             failwith "Index out of the range"
         else
+            let tmp = this.Data[index]
             this.Data[index] <- this.Data[this.Length - 1]
+            this.Data[this.Length - 1] <- tmp
+
             this.Length <- this.Length - 1
+
+    member this.Restore = this.Length <- this.Data.Length - 1
 
     member this.IsEmpty = this.Length = 0

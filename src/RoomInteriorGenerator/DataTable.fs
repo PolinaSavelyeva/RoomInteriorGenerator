@@ -37,21 +37,18 @@ type MaximumAmount =
 
 type DataTableRow<'Value> =
     val Name: string
-    val mutable MaximumAmount: MaximumAmount
     val Variants: DynamicLengthArray<ObjectVariant<'Value>>
     val PlacementRule: Rule
     val LeafsTable: Option<DynamicLengthArray<DataTableRow<'Value>>>
 
-    new(name, maximumAmount, instancesDynamicArray, placementRule, leafsArray) =
+    new(name, instancesDynamicArray, placementRule, leafsArray) =
         { Name = name
-          MaximumAmount = maximumAmount
           Variants = instancesDynamicArray
           PlacementRule = placementRule
           LeafsTable = leafsArray }
 
-    new(name, maximumAmount, instancesArray, placementRule, leafsArray: Option<array<DataTableRow<'Value>>>) =
+    new(name, instancesArray, placementRule, leafsArray: Option<array<DataTableRow<'Value>>>) =
         { Name = name
-          MaximumAmount = maximumAmount
           Variants = DynamicLengthArray instancesArray
           PlacementRule = placementRule
           LeafsTable =
@@ -59,6 +56,12 @@ type DataTableRow<'Value> =
                 Option.None
             else
                 Some(DynamicLengthArray leafsArray.Value) }
+
+    member this.RestoreVariants = this.Variants.Restore
+
+    member this.RestoreLeafsTable =
+        if this.LeafsTable.IsSome then
+            this.LeafsTable.Value.Restore
 
     member this.LengthOfVariantsArray = this.Variants.Length
 
@@ -76,15 +79,13 @@ type DataTable<'Value> =
 
     member this.Delete(index: int) = this.Rows.Delete index
 
+    member this.Restore =
+        this.Rows.Restore
+
+        Array.iter
+            (fun (n: DataTableRow<'Value>) ->
+                n.RestoreVariants
+                n.RestoreLeafsTable)
+            this.Rows.Data
+
     member this.IsEmpty = this.Rows.IsEmpty
-
-    member this.ReduceMaximumAmount (objectRow: DataTableRow<'Value>) dataTableObjectIndex =
-        match objectRow.MaximumAmount with
-        | Infinity -> ()
-        | Finite n ->
-            objectRow.MaximumAmount <- Finite(n - 1)
-
-            if objectRow.MaximumAmount = Finite 0 then
-                this.Delete dataTableObjectIndex
-            else
-                ()

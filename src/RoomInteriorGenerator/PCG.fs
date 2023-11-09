@@ -122,9 +122,7 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
         for i in parentCellRowIndex - parentVariant.FreeCellsOnTheTop - occupyRadius * top .. parentCellRowIndex + parentVariant.FreeCellsOnTheBottom + occupyRadius * bottom do
             for j in parentCellColumnIndex - parentVariant.FreeCellsOnTheLeft - occupyRadius * left .. parentCellColumnIndex + parentVariant.FreeCellsOnTheRight + occupyRadius * right do
-                if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid.IsOccupied(i, j) then
-                    ()
-                else
+                if not (i < 0 || i >= cellGrid.Width || j < 0 || j >= cellGrid.Length || cellGrid.IsOccupied(i, j)) then
                     cellGrid.MakeOccupiedForChildren(i, j)
 
     let tryOccupyForChildren (parentObjectVariant: Option<ObjectVariant<'Value>>) (parentPlace: Option<int * int>) (objectRow: DataTableRow<'Value>, objectVariant: ObjectVariant<'Value>) =
@@ -138,15 +136,11 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
             let leafPlacementRule = objectRow.PlacementRule
 
             makeOccupiedForChildren parentObjectVariant.Value parentPlace.Value (maxColliderDimension + 1) leafPlacementRule
-        else
-            ()
 
     let tryCleanOccupiedForChildrenCells (parentObjectVariant: Option<ObjectVariant<'Value>>) =
 
         if parentObjectVariant.IsSome then
             cellGrid.CleanOccupiedForChildrenCells
-        else
-            ()
 
     let rec inner
         (stack: Stack<Option<ObjectVariant<'Value>> * Option<int * int> * DataTable<'Value>>)
@@ -159,6 +153,9 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
         if amountOfObjectsToBePlaced = 0 || dataTable.IsEmpty then
             ()
         elif currentDataTable.IsEmpty then
+
+            currentDataTable.Restore
+
             let previousObjectInformation = stack.Pop()
 
             inner stack (first previousObjectInformation) (second previousObjectInformation) (third previousObjectInformation) amountOfObjectsToBePlaced
@@ -179,8 +176,6 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 makeOccupied objectVariant place.Value
 
                 let leafsTable = objectRow.LeafsTable
-
-                dataTable.ReduceMaximumAmount objectRow dataTableObjectIndex
 
                 if leafsTable.IsSome then
                     stack.Push(currentParentObjectVariant, currentParentPlace, currentDataTable)
