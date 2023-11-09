@@ -24,6 +24,6 @@
             <Version>0.13.3</Version>
           </PackageReference>
         </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets" />
+    <Import Project="../../.paket/Paket.Restore.targets" />
 </Project>
 
