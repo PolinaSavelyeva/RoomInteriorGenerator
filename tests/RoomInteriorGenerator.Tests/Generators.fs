@@ -1,9 +1,47 @@
 ﻿module RoomInteriorGenerator.Tests.Generators
 
 open FsCheck
+open RoomInteriorGenerator
 open RoomInteriorGenerator.Cell
 open RoomInteriorGenerator.DataTable
+open RoomInteriorGenerator.Tests.Helper
 
+
+type DynamicLengthArrayInt =
+    val Data: DynamicLengthArray<int>
+    new(data) = { Data = data }
+
+let intDynamicLengthArrayGen =
+    gen {
+        let! length = Gen.choose (2, 100)
+        let! array = Gen.arrayOfLength length (Gen.choose (0, 100))
+
+        return! Gen.constant (DynamicLengthArrayInt(DynamicLengthArray array))
+    }
+
+type DynamicLengthArrayString =
+    val Data: DynamicLengthArray<string>
+    new(data) = { Data = data }
+
+let stringDynamicLengthArrayGen =
+    gen {
+        let! length = Gen.choose (2, 100)
+        let! array = Gen.arrayOfLength length (Gen.elements [ "addf"; "bsdsd" ])
+
+        return! Gen.constant (DynamicLengthArrayString(DynamicLengthArray array))
+    }
+
+type DynamicLengthArrayBool =
+    val Data: DynamicLengthArray<bool>
+    new(data) = { Data = data }
+
+let boolDynamicLengthArrayGen =
+    gen {
+        let! length = Gen.choose (2, 100)
+        let! array = Gen.arrayOfLength length (Gen.elements [ true; false ])
+
+        return! Gen.constant (DynamicLengthArrayBool(DynamicLengthArray array))
+    }
 
 let cellGen =
     gen {
@@ -150,6 +188,9 @@ type BoolDataTable =
     member this.Length = this.DataTable.Length
 
 type Generators =
+    static member IntDynamicLengthArray() = Arb.fromGen intDynamicLengthArrayGen
+    static member StringDynamicLengthArray() = Arb.fromGen stringDynamicLengthArrayGen
+    static member BoolDynamicLengthArray() = Arb.fromGen boolDynamicLengthArrayGen
     static member CellGrid() = Arb.fromGen cellGridGen
     static member IntDataTable() = Arb.fromGen intDataTableGen
     static member StringDataTable() = Arb.fromGen stringDataTableGen

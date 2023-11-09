@@ -11,6 +11,7 @@
         <ItemGroup>
         <Compile Include="Helper.fs" />
         <Compile Include="Generators.fs" />
+        <Compile Include="DynamicLengthArray.fs" />
         <Compile Include="DataTable.fs" />
         <Compile Include="Cell.fs" />
         <Compile Include="Room.fs" />
