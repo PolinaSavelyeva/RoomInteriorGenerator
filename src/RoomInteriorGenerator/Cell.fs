@@ -23,8 +23,8 @@ type CellGrid =
             else
                 this.Data[i * this.Length + j]
 
-    member this.ClearOccupiedForChildrenCells =
-        //TODO
+    member this.CleanOccupiedForChildrenCells =
+
         Array.iteri
             (fun n (cell: Cell) ->
                 match cell with

@@ -105,7 +105,7 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
             for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do
                 cellGrid.MakeOccupied(i, j)
 
-    let makeOccupiedForChildren (parentVariant: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) occupyRadius leafPlacementRule =
+    let makeOccupiedForChildren (parentVariant: ObjectVariant<'Value>) (parentCellRowIndex, parentCellColumnIndex) occupyRadius leafPlacementRule =
 
         let top, bottom, left, right =
             match leafPlacementRule with
@@ -118,51 +118,64 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 | Anywhere -> 1, 1, 1, 1
             | _ -> failwith "Leaf were expected as input type."
 
-        for i in cellRowIndex - parentVariant.FreeCellsOnTheTop - occupyRadius * top .. cellRowIndex + parentVariant.FreeCellsOnTheBottom + occupyRadius * bottom do
-            for j in cellColumnIndex - parentVariant.FreeCellsOnTheLeft - occupyRadius * left .. cellColumnIndex + parentVariant.FreeCellsOnTheRight + occupyRadius * right do
+        for i in parentCellRowIndex - parentVariant.FreeCellsOnTheTop - occupyRadius * top .. parentCellRowIndex + parentVariant.FreeCellsOnTheBottom + occupyRadius * bottom do
+            for j in parentCellColumnIndex - parentVariant.FreeCellsOnTheLeft - occupyRadius * left .. parentCellColumnIndex + parentVariant.FreeCellsOnTheRight + occupyRadius * right do
                 if i < 0 || i > cellGrid.Width || j < 0 || j > cellGrid.Length || cellGrid.IsOccupied(i, j) then
                     ()
                 else
                     cellGrid.MakeOccupiedForChildren(i, j)
 
+    let tryOccupyForChildren (parentObjectVariant: Option<ObjectVariant<'Value>>) (parentPlace: Option<int * int>) (objectRow: DataTableRow<'Value>, objectVariant: ObjectVariant<'Value>) =
+
+        if parentObjectVariant.IsSome then
+            let maxColliderDimension =
+                max objectVariant.FreeCellsOnTheBottom objectVariant.FreeCellsOnTheRight
+                |> max objectVariant.FreeCellsOnTheLeft
+                |> max objectVariant.FreeCellsOnTheTop
+
+            let leafPlacementRule = objectRow.PlacementRule
+
+            makeOccupiedForChildren parentObjectVariant.Value parentPlace.Value (maxColliderDimension + 1) leafPlacementRule
+        else
+            ()
+
+    let tryCleanOccupiedForChildrenCells (parentObjectVariant: Option<ObjectVariant<'Value>>) =
+
+        if parentObjectVariant.IsSome then
+            cellGrid.CleanOccupiedForChildrenCells
+        else
+            ()
+
     let rec inner (parentObjectVariant: Option<ObjectVariant<'Value>>) (parentPlace: Option<int * int>) (currentDataTable: DataTable<'Value>) amountOfObjectsToBePlaced =
+
         if amountOfObjectsToBePlaced = 0 || currentDataTable.IsEmpty then
             ()
         else
             let objectRow, objectVariant, dataTableObjectIndex, dataTableVariantIndex =
                 selectObjectToPlace currentDataTable randomIntGeneratorWithSeed
 
-            if parentObjectVariant.IsSome then
-                let maxColliderDimension =
-                    max objectVariant.FreeCellsOnTheBottom objectVariant.FreeCellsOnTheRight
-                    |> max objectVariant.FreeCellsOnTheLeft
-                    |> max objectVariant.FreeCellsOnTheTop
-
-                let leafPlacementRule = objectRow.PlacementRule
-
-                makeOccupiedForChildren parentObjectVariant.Value parentPlace.Value (maxColliderDimension + 1) leafPlacementRule
+            tryOccupyForChildren parentObjectVariant parentPlace (objectRow, objectVariant)
 
             let place =
                 findAvailablePlaceForObject cellGrid (objectRow, objectVariant) randomIntGeneratorWithSeed
 
+            tryCleanOccupiedForChildrenCells parentObjectVariant
+
             if place.IsSome then
 
-                dataTable.ReduceMaximumAmount objectRow dataTableObjectIndex
                 placementFunction (objectRow, objectVariant) place.Value
-
-                if parentObjectVariant.IsSome then
-                    cellGrid.ClearOccupiedForChildrenCells
-
                 makeOccupied objectVariant place.Value
 
                 let leafsTable = objectRow.LeafsTable
 
-                if leafsTable.IsSome && amountOfObjectsToBePlaced <> 1 then
-                    inner (Some objectVariant) parentPlace (DataTable(leafsTable.Value)) (amountOfObjectsToBePlaced - 1)
+                dataTable.ReduceMaximumAmount objectRow dataTableObjectIndex
+
+                if leafsTable.IsSome then
+                    inner (Some objectVariant) place (DataTable(leafsTable.Value)) (amountOfObjectsToBePlaced - 1)
                 else
                     inner parentObjectVariant parentPlace currentDataTable (amountOfObjectsToBePlaced - 1)
             else
-                if objectRow.Variants.IsEmpty then
+                if objectRow.Variants.IsEmpty || objectRow.LengthOfVariantsArray = 1 then
                     currentDataTable.Delete dataTableObjectIndex
                 else
                     objectRow.Variants.Delete dataTableVariantIndex

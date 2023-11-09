@@ -37,7 +37,6 @@ type DataTableRow<'Value> =
     val Name: string
     val mutable MaximumAmount: MaximumAmount
     val Variants: DynamicLengthArray<ObjectVariant<'Value>>
-    val LengthOfVariantsArray: int
     val PlacementRule: Rule
     val LeafsTable: Option<DynamicLengthArray<DataTableRow<'Value>>>
 
@@ -45,7 +44,6 @@ type DataTableRow<'Value> =
         { Name = name
           MaximumAmount = maximumAmount
           Variants = instancesDynamicArray
-          LengthOfVariantsArray = instancesDynamicArray.Length
           PlacementRule = placementRule
           LeafsTable = leafsArray }
 
@@ -53,7 +51,6 @@ type DataTableRow<'Value> =
         { Name = name
           MaximumAmount = maximumAmount
           Variants = DynamicLengthArray instancesArray
-          LengthOfVariantsArray = instancesArray.Length
           PlacementRule = placementRule
           LeafsTable =
             if leafsArray.IsNone then
@@ -61,33 +58,23 @@ type DataTableRow<'Value> =
             else
                 Some(DynamicLengthArray leafsArray.Value) }
 
+    member this.LengthOfVariantsArray = this.Variants.Length
+
 type DataTable<'Value> =
     val Rows: DynamicLengthArray<DataTableRow<'Value>>
-    val mutable Length: int
 
-    new(rowsDynamicLengthArray: DynamicLengthArray<DataTableRow<'Value>>) =
-        { Rows = rowsDynamicLengthArray
-          Length = rowsDynamicLengthArray.Length }
+    new(rowsDynamicLengthArray: DynamicLengthArray<DataTableRow<'Value>>) = { Rows = rowsDynamicLengthArray }
 
-    new(rowsArray: array<DataTableRow<'Value>>) =
-        { Rows = DynamicLengthArray rowsArray
-          Length = rowsArray.Length }
+    new(rowsArray: array<DataTableRow<'Value>>) = { Rows = DynamicLengthArray rowsArray }
+
+    member this.Length = this.Rows.Length
 
     member this.Item
-        with get i =
-            if i >= this.Length || i < 0 then
-                failwith "Index out of the range"
-            else
-                this.Rows[i]
+        with get i = this.Rows[i]
 
-    member this.Delete(index: int) =
-        if index < 0 || index >= this.Length then
-            failwith "Index out of the range"
-        else
-            this.Rows.Data[index] <- this.Rows[this.Length - 1]
-            this.Length <- this.Length - 1
+    member this.Delete(index: int) = this.Rows.Delete index
 
-    member this.IsEmpty = this.Length = 0
+    member this.IsEmpty = this.Rows.IsEmpty
 
     member this.ReduceMaximumAmount (objectRow: DataTableRow<'Value>) dataTableObjectIndex =
         match objectRow.MaximumAmount with
