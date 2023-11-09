@@ -125,23 +125,6 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 if not (i < 0 || i >= cellGrid.Width || j < 0 || j >= cellGrid.Length || cellGrid.IsOccupied(i, j)) then
                     cellGrid.MakeOccupiedForChildren(i, j)
 
-    let tryOccupyForChildren (parentObjectVariant: Option<ObjectVariant<'Value>>) (parentPlace: Option<int * int>) (objectRow: DataTableRow<'Value>, objectVariant: ObjectVariant<'Value>) =
-
-        if parentObjectVariant.IsSome then
-            let maxColliderDimension =
-                max objectVariant.FreeCellsOnTheBottom objectVariant.FreeCellsOnTheRight
-                |> max objectVariant.FreeCellsOnTheLeft
-                |> max objectVariant.FreeCellsOnTheTop
-
-            let leafPlacementRule = objectRow.PlacementRule
-
-            makeOccupiedForChildren parentObjectVariant.Value parentPlace.Value (maxColliderDimension + 1) leafPlacementRule
-
-    let tryCleanOccupiedForChildrenCells (parentObjectVariant: Option<ObjectVariant<'Value>>) =
-
-        if parentObjectVariant.IsSome then
-            cellGrid.CleanOccupiedForChildrenCells
-
     let rec inner
         (stack: Stack<Option<ObjectVariant<'Value>> * Option<int * int> * DataTable<'Value>>)
         (currentParentObjectVariant: Option<ObjectVariant<'Value>>)
@@ -163,12 +146,21 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
             let objectRow, objectVariant, dataTableObjectIndex, dataTableVariantIndex =
                 selectObjectToPlace currentDataTable randomIntGeneratorWithSeed
 
-            tryOccupyForChildren currentParentObjectVariant currentParentPlace (objectRow, objectVariant)
+            if currentParentObjectVariant.IsSome then
+                let maxColliderDimension =
+                    max objectVariant.FreeCellsOnTheBottom objectVariant.FreeCellsOnTheRight
+                    |> max objectVariant.FreeCellsOnTheLeft
+                    |> max objectVariant.FreeCellsOnTheTop
+
+                let leafPlacementRule = objectRow.PlacementRule
+
+                makeOccupiedForChildren currentParentObjectVariant.Value currentParentPlace.Value (maxColliderDimension + 1) leafPlacementRule
 
             let place =
                 findAvailablePlaceForObject cellGrid (objectRow, objectVariant) randomIntGeneratorWithSeed
 
-            tryCleanOccupiedForChildrenCells currentParentObjectVariant
+            if currentParentObjectVariant.IsSome then
+                cellGrid.CleanOccupiedForChildrenCells
 
             if place.IsSome then
 
