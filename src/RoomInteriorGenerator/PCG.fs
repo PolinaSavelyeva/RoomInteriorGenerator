@@ -2,6 +2,8 @@ module RoomInteriorGenerator.PCG
 
 open DataTable
 open Cell
+open Helper
+open System.Collections.Generic
 
 let selectObjectToPlace (dataTable: DataTable<'Value>) randomIntGeneratorWithSeed =
 
@@ -146,20 +148,30 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
         else
             ()
 
-    let rec inner (parentObjectVariant: Option<ObjectVariant<'Value>>) (parentPlace: Option<int * int>) (currentDataTable: DataTable<'Value>) amountOfObjectsToBePlaced =
+    let rec inner
+        (stack: Stack<Option<ObjectVariant<'Value>> * Option<int * int> * DataTable<'Value>>)
+        (currentParentObjectVariant: Option<ObjectVariant<'Value>>)
+        (currentParentPlace: Option<int * int>)
+        (currentDataTable: DataTable<'Value>)
+        amountOfObjectsToBePlaced
+        =
 
-        if amountOfObjectsToBePlaced = 0 || currentDataTable.IsEmpty then
+        if amountOfObjectsToBePlaced = 0 || dataTable.IsEmpty then
             ()
+        elif currentDataTable.IsEmpty then
+            let previousObjectInformation = stack.Pop()
+
+            inner stack (first previousObjectInformation) (second previousObjectInformation) (third previousObjectInformation) amountOfObjectsToBePlaced
         else
             let objectRow, objectVariant, dataTableObjectIndex, dataTableVariantIndex =
                 selectObjectToPlace currentDataTable randomIntGeneratorWithSeed
 
-            tryOccupyForChildren parentObjectVariant parentPlace (objectRow, objectVariant)
+            tryOccupyForChildren currentParentObjectVariant currentParentPlace (objectRow, objectVariant)
 
             let place =
                 findAvailablePlaceForObject cellGrid (objectRow, objectVariant) randomIntGeneratorWithSeed
 
-            tryCleanOccupiedForChildrenCells parentObjectVariant
+            tryCleanOccupiedForChildrenCells currentParentObjectVariant
 
             if place.IsSome then
 
@@ -171,15 +183,17 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 dataTable.ReduceMaximumAmount objectRow dataTableObjectIndex
 
                 if leafsTable.IsSome then
-                    inner (Some objectVariant) place (DataTable(leafsTable.Value)) (amountOfObjectsToBePlaced - 1)
+                    stack.Push(currentParentObjectVariant, currentParentPlace, currentDataTable)
+                    inner stack (Some objectVariant) place (DataTable(leafsTable.Value)) (amountOfObjectsToBePlaced - 1)
                 else
-                    inner parentObjectVariant parentPlace currentDataTable (amountOfObjectsToBePlaced - 1)
+                    inner stack currentParentObjectVariant currentParentPlace currentDataTable (amountOfObjectsToBePlaced - 1)
             else
                 if objectRow.Variants.IsEmpty || objectRow.LengthOfVariantsArray = 1 then
                     currentDataTable.Delete dataTableObjectIndex
                 else
                     objectRow.Variants.Delete dataTableVariantIndex
 
-                inner parentObjectVariant parentPlace currentDataTable amountOfObjectsToBePlaced
+                inner stack currentParentObjectVariant currentParentPlace currentDataTable amountOfObjectsToBePlaced
 
-    inner Option.None Option.None dataTable maximumAmountOfObjects
+    let stack = Stack()
+    inner stack Option.None Option.None dataTable maximumAmountOfObjects

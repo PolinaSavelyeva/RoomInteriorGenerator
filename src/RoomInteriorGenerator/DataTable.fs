@@ -1,5 +1,7 @@
 module RoomInteriorGenerator.DataTable
 
+open Helper
+
 type LeafPlacementRule =
     | LeftTo
     | RightTo
