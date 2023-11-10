@@ -5,6 +5,16 @@ open Cell
 open Helper
 open System.Collections.Generic
 
+
+/// <summary>
+/// Selects an object to place based on a DataTable and a random integer generator with seed.
+/// </summary>
+/// <param name="dataTable">The DataTable containing objects and their variants</param>
+/// <param name="randomIntGeneratorWithSeed">The random integer generator with seed</param>
+/// <returns>
+/// Tuple containing the selected object, its instance, the index in the DataTable,
+/// and the index of the selected variant.
+/// </returns>
 let selectObjectToPlace (dataTable: DataTable<'Value>) randomIntGeneratorWithSeed =
 
     let dataTableObjectIndex = randomIntGeneratorWithSeed 0 dataTable.Length
@@ -17,8 +27,21 @@ let selectObjectToPlace (dataTable: DataTable<'Value>) randomIntGeneratorWithSee
 
     objectToPlace, objectToPlaceInstance, dataTableObjectIndex, dataTableObjectVariantIndex
 
+/// <summary>
+/// Finds an available place for a selected object.
+/// </summary>
+/// <param name="cellGrid">The CellGrid representing the available cells for object placement</param>
+/// <param name="selectedObjectRow">The DataTableRow representing the selected object</param>
+/// <param name="selectedObjectInstance">The ObjectVariant representing the selected instance of the object</param>
+/// <param name="randomIntGeneratorWithSeed">The random integer generator with seed</param>
+/// <returns>
+/// Option type representing either the coordinates of the available cell or None if no suitable cell is found.
+/// </returns>
 let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTableRow<'Value>, selectedObjectInstance: ObjectVariant<'Value>) randomIntGeneratorWithSeed =
 
+    /// <summary>
+    /// Generates an dynamic length array of cell coordinates that match the placement rule of the selected object.
+    /// </summary>
     let matchingCellsArray =
         let predicate =
             match selectedObjectRow.PlacementRule with
@@ -49,7 +72,13 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
 
         DynamicLengthArray(data)
 
-
+    /// <summary>
+    /// Checks if a cell at the specified coordinates is a matching cell based on the given criteria.
+    /// </summary>
+    /// <param name="cellRowIndex">The row index of the cell</param>
+    /// <param name="cellColumnIndex">The column index of the cell</param>
+    /// <param name="indexInMatchingCellsArray">The index in the array of matching cells</param>
+    /// <returns>True if the cell matches the criteria; otherwise, false</returns>
     let isCellMatching (cellRowIndex, cellColumnIndex) indexInMatchingCellsArray =
 
         // F# does not have break for loops
@@ -78,6 +107,11 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
             (cellColumnIndex - selectedObjectInstance.FreeCellsOnTheLeft)
             (cellColumnIndex + selectedObjectInstance.FreeCellsOnTheRight)
 
+    /// <summary>
+    /// Selects a random cell from the given array of matching cells.
+    /// </summary>
+    /// <param name="matchingCellsArray">The array of matching cells to choose from</param>
+    /// <returns>The selected cell coordinates and the index in the array</returns>
     let selectCell (matchingCellsArray: DynamicLengthArray<int * int>) =
 
         // index in fittingCellsArray is not the same as cell.ColumnIndex or cell.RowIndex
@@ -99,14 +133,36 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
 
     inner ()
 
+/// <summary>
+/// Generates room interior by placing objects from DataTable on a CellGrid using specified placement function.
+/// </summary>
+/// <param name="cellGrid">The CellGrid representing the available cells for object placement</param>
+/// <param name="dataTable">The DataTable containing objects and their variants</param>
+/// <param name="maximumAmountOfObjects">The maximum number of objects to be placed</param>
+/// <param name="placementFunction">The function responsible for placing objects on the grid</param>
+/// <param name="randomIntGeneratorWithSeed">The random integer generator with seed</param>
 let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximumAmountOfObjects: int) placementFunction randomIntGeneratorWithSeed =
 
+    /// <summary>
+    /// Marks the cells within the specified range as occupied.
+    /// </summary>
+    /// <param name="instance">The object variant instance</param>
+    /// <param name="cellRowIndex">The row index of the starting cell</param>
+    /// <param name="cellColumnIndex">The column index of the starting cell</param>
     let makeOccupied (instance: ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) =
 
         for i in cellRowIndex - instance.FreeCellsOnTheTop .. cellRowIndex + instance.FreeCellsOnTheBottom do
             for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do
                 cellGrid.MakeOccupied(i, j)
 
+    /// <summary>
+    /// Marks the cells within a specified range around the parent cell as occupied for children.
+    /// </summary>
+    /// <param name="parentVariant">The parent object variant</param>
+    /// <param name="parentCellRowIndex">The row index of the parent cell</param>
+    /// <param name="parentCellColumnIndex">The column index of the parent cell</param>
+    /// <param name="occupyRadius">The radius around the parent cell to mark as occupied for children</param>
+    /// <param name="leafPlacementRule">The leaf placement rule specifying how children are placed around the parent</param>
     let makeOccupiedForChildren (parentVariant: ObjectVariant<'Value>) (parentCellRowIndex, parentCellColumnIndex) occupyRadius leafPlacementRule =
 
         let top, bottom, left, right =

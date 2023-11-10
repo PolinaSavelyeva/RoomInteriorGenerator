@@ -1,5 +1,8 @@
 module RoomInteriorGenerator.DataTable
 
+/// <summary>
+/// Enumerates child placement rules for objects to be placed in the room.
+/// </summary>
 type LeafPlacementRule =
     | LeftTo
     | RightTo
@@ -7,14 +10,23 @@ type LeafPlacementRule =
     | InFrontOf
     | Anywhere
 
+/// <summary>
+/// Enumerates node placement rules for objects to be placed in the room.
+/// </summary>
 type NodePlacementRule =
     | AgainstTheWall
     | None
 
+/// <summary>
+/// Represents placement rules for objects, which can be either node or leaf rules.
+/// </summary>
 type Rule =
     | Node of NodePlacementRule
     | Leaf of LeafPlacementRule
 
+/// <summary>
+/// Represents a variant of an object with specific instance data and dimensions.
+/// </summary>
 type ObjectVariant<'Value> =
     val Instance: 'Value
     val FreeCellsOnTheRight: int
@@ -29,10 +41,9 @@ type ObjectVariant<'Value> =
           FreeCellsOnTheTop = top
           FreeCellsOnTheBottom = bottom }
 
-type MaximumAmount =
-    | Infinity
-    | Finite of int
-
+/// <summary>
+/// Represents a row in a DataTable containing object variants, placement rules, and optional leaf tables.
+/// </summary>
 type DataTableRow<'Value> =
     val Name: string
     val Variants: DynamicLengthArray<ObjectVariant<'Value>>
@@ -55,14 +66,26 @@ type DataTableRow<'Value> =
             else
                 Some(DynamicLengthArray leafsArray.Value) }
 
+    /// <summary>
+    /// Restores the variants array to its original length.
+    /// </summary>
     member this.RestoreVariants = this.Variants.Restore
 
+    /// <summary>
+    /// Restores the leafs table array to its original length if it is not Option.None.
+    /// </summary>
     member this.RestoreLeafsTable =
         if this.LeafsTable.IsSome then
             this.LeafsTable.Value.Restore
 
+    /// <summary>
+    /// Gets the length of the variants array.
+    /// </summary>
     member this.LengthOfVariantsArray = this.Variants.Length
 
+/// <summary>
+/// Represents a DataTable containing rows of DataTableRow.
+/// </summary>
 type DataTable<'Value> =
     val Rows: DynamicLengthArray<DataTableRow<'Value>>
 
@@ -70,13 +93,25 @@ type DataTable<'Value> =
 
     new(rowsArray: array<DataTableRow<'Value>>) = { Rows = DynamicLengthArray rowsArray }
 
+    /// <summary>
+    /// Gets the length of the DataTable.
+    /// </summary>
     member this.Length = this.Rows.Length
 
+    /// <summary>
+    /// Gets the DataTableRow at the specified index.
+    /// </summary>
     member this.Item
         with get i = this.Rows[i]
 
+    /// <summary>
+    /// Deletes the DataTableRow at the specified index.
+    /// </summary>
     member this.Delete(index: int) = this.Rows.Delete index
 
+    /// <summary>
+    /// Restores the DataTable and its rows to their original lengths.
+    /// </summary>
     member this.Restore =
         this.Rows.Restore
 
@@ -86,4 +121,7 @@ type DataTable<'Value> =
                 n.RestoreLeafsTable)
             this.Rows.Data
 
+    /// <summary>
+    /// Checks if the DataTable is empty.
+    /// </summary>
     member this.IsEmpty = this.Rows.IsEmpty
