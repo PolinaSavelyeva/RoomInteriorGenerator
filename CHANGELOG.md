@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Add net47 support
+
 ## [1.0.0-alpha1] - 2023-11-13
 
 ### Added
