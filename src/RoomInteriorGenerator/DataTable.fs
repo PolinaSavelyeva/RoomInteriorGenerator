@@ -66,6 +66,16 @@ type DataTableRow<'Value> =
             else
                 Some(DynamicLengthArray leafsArray.Value) }
 
+    new(name, instancesArray, placementRule, leafsArray: array<DataTableRow<'Value>>) =
+        { Name = name
+          Variants = DynamicLengthArray instancesArray
+          PlacementRule = placementRule
+          LeafsTable =
+            if Array.isEmpty leafsArray then
+                Option.None
+            else
+                Some(DynamicLengthArray leafsArray) }
+
     /// <summary>
     /// Restores the variants array to its original length.
     /// </summary>

@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- New constructor for `DataTable` class
+
 ## [1.0.0-alpha3] - 2023-11-15
 
 ### Fixed
