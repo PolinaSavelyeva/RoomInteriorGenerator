@@ -13,7 +13,6 @@ let config =
         arbitrary = [ typeof<Generators.Generators> ] }
 
 module SelectObjectToPlace =
-    open Generators
 
     [<Tests>]
     let tests =

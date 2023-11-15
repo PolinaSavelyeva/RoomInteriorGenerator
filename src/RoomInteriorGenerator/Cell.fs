@@ -40,7 +40,8 @@ type CellGrid =
         Array.iteri
             (fun n (cell: Cell) ->
                 match cell with
-                | OccupiedForChildren -> this.Data[n] <- Occupied)
+                | OccupiedForChildren -> this.Data[n] <- Occupied
+                | _ -> ())
             this.Data
 
     /// <summary>

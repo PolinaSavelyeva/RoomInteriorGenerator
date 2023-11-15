@@ -45,7 +45,7 @@ let boolDynamicLengthArrayGen =
 
 let cellGen =
     gen {
-        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall; Cell.OccupiedForChildren ]
+        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall; OccupiedForChildren ]
         return! Gen.constant cellStatus
     }
 

@@ -1,7 +1,6 @@
 ﻿module RoomInteriorGenerator.Tests.DynamicLengthArray
 
 open Helper.DynamicLengthArray
-open RoomInteriorGenerator
 open Expecto
 open FsCheck
 open RoomInteriorGenerator.Tests.Generators
