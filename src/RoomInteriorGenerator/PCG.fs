@@ -220,7 +220,7 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
 
             if place.IsSome then
 
-                placementFunction (objectRow, objectVariant) place.Value
+                placementFunction objectRow objectVariant (fst place.Value) (snd place.Value)
                 makeOccupied objectVariant place.Value
 
                 let leafsTable = objectRow.LeafsTable

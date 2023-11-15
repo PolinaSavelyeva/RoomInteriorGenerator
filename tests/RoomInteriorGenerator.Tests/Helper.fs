@@ -106,7 +106,7 @@ module Room =
 
     let placementFunction (roomToChange: 'Value[,]) =
 
-        fun (_: DataTable.DataTableRow<'Value>, instance: DataTable.ObjectVariant<'Value>) (cellRowIndex, cellColumnIndex) ->
+        fun (_: DataTable.DataTableRow<'Value>) (instance: DataTable.ObjectVariant<'Value>) cellRowIndex cellColumnIndex ->
 
             for i in cellRowIndex - instance.FreeCellsOnTheTop .. cellRowIndex + instance.FreeCellsOnTheBottom do
                 for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do

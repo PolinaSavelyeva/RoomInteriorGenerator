@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Fix placement function signature to prevent C# errors
+
 ## [1.0.0-alpha1] - 2023-11-13
 
 ### Added
