@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Fix room grid generating
+
 ## [1.0.0-beta1] - 2023-11-16
 
 ### Added

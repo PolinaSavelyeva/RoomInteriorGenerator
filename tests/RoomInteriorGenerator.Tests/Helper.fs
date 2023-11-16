@@ -53,9 +53,9 @@ module Cell =
                 elif i = 0 && j <> 0 && j <> roomLength - 1 then
                     AgainstTheTopWall
                 elif j = roomLength - 1 && i <> 0 && i <> roomWidth - 1 then
-                    AgainstTheLeftWall
+                    AgainstTheRightWall
                 elif i = roomWidth - 1 && j <> 0 && j <> roomLength - 1 then
-                    AgainstTheLeftWall
+                    AgainstTheBottomWall
                 elif
                     (i = 0 && j = 0)
                     || (i = 0 && j = roomLength - 1)
