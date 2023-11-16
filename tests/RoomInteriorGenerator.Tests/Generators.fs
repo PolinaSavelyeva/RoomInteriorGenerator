@@ -4,8 +4,6 @@ open FsCheck
 open RoomInteriorGenerator
 open RoomInteriorGenerator.Cell
 open RoomInteriorGenerator.DataTable
-open RoomInteriorGenerator.Tests.Helper
-
 
 type DynamicLengthArrayInt =
     val Data: DynamicLengthArray<int>
@@ -45,7 +43,7 @@ let boolDynamicLengthArrayGen =
 
 let cellGen =
     gen {
-        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheWall; OccupiedForChildren ]
+        let! cellStatus = Gen.elements [ NonOccupied; Occupied; Cell.AgainstTheLeftWall; Cell.AgainstTheBottomWall; Cell.AgainstTheRightWall; Cell.AgainstTheTopWall; Corner; OccupiedForChildren ]
         return! Gen.constant cellStatus
     }
 
@@ -96,7 +94,15 @@ let boolObjectVariantGen =
 
 let rulesGen =
     gen {
-        let! nodePlacementRule = Gen.elements [ NodePlacementRule.AgainstTheWall; None ]
+        let! nodePlacementRule =
+            Gen.elements
+                [ NodePlacementRule.AgainstTheLeftWall
+                  NodePlacementRule.AgainstTheBottomWall
+                  NodePlacementRule.AgainstTheRightWall
+                  NodePlacementRule.AgainstTheTopWall
+                  NodePlacementRule.InTheCorner
+                  None ]
+
         return! Gen.constant (Node nodePlacementRule)
     }
 

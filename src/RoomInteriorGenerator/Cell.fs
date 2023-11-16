@@ -5,7 +5,11 @@ module RoomInteriorGenerator.Cell
 /// </summary>
 type Cell =
     | NonOccupied
-    | AgainstTheWall // Cell is a part of the perimeter and serves as a wall
+    | AgainstTheLeftWall
+    | AgainstTheRightWall
+    | AgainstTheTopWall
+    | AgainstTheBottomWall
+    | Corner
     | Occupied
     | OccupiedForChildren // Cell is occupied and reserved for child objects
 
@@ -63,10 +67,28 @@ type CellGrid =
         this.Data[i * this.Length + j] = Occupied
 
     /// <summary>
-    /// Checks if the cell at the specified coordinates (i, j) is in the AgainstTheWall state.
+    /// Checks if the cell at the specified coordinates (i, j) is in the AgainstTheLeftWall state.
     /// </summary>
-    member this.IsAgainstTheWall(i, j) =
-        this.Data[i * this.Length + j] = AgainstTheWall
+    member this.IsAgainstTheLeftWall(i, j) =
+        this.Data[i * this.Length + j] = AgainstTheLeftWall
+
+    /// <summary>
+    /// Checks if the cell at the specified coordinates (i, j) is in the AgainstTheRightWall state.
+    /// </summary>
+    member this.IsAgainstTheRightWall(i, j) =
+        this.Data[i * this.Length + j] = AgainstTheRightWall
+
+    /// <summary>
+    /// Checks if the cell at the specified coordinates (i, j) is in the AgainstTheTopWall state.
+    /// </summary>
+    member this.IsAgainstTheTopWall(i, j) =
+        this.Data[i * this.Length + j] = AgainstTheTopWall
+
+    /// <summary>
+    /// Checks if the cell at the specified coordinates (i, j) is in the AgainstTheBottomWall state.
+    /// </summary>
+    member this.IsAgainstTheBottomWall(i, j) =
+        this.Data[i * this.Length + j] = AgainstTheBottomWall
 
     /// <summary>
     /// Checks if the cell at the specified coordinates (i, j) is in the NonOccupied state.

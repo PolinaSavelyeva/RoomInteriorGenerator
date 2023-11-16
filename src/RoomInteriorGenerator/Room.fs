@@ -33,8 +33,21 @@ type Room<'Value> =
                 let i = index / roomLength
                 let j = index % roomLength
 
-                if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
-                    AgainstTheWall
+                if j = 0 && i <> roomWidth - 1 && i <> 0 then
+                    AgainstTheLeftWall
+                elif i = 0 && j <> 0 && j <> roomLength - 1 then
+                    AgainstTheTopWall
+                elif j = roomLength - 1 && i <> 0 && i <> roomWidth - 1 then
+                    AgainstTheLeftWall
+                elif i = roomWidth - 1 && j <> 0 && j <> roomLength - 1 then
+                    AgainstTheLeftWall
+                elif
+                    (i = 0 && j = 0)
+                    || (i = 0 && j = roomLength - 1)
+                    || (i = roomWidth - 1 && j = roomLength - 1)
+                    || (i = roomWidth - 1 && j = 0)
+                then
+                    Corner
                 else
                     NonOccupied)
 

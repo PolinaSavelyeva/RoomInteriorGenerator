@@ -20,13 +20,13 @@ module DataTable =
         DataTableRow("Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |], Node None, Option.None)
 
     let couchRow =
-        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheWall, Option.None)
+        DataTableRow("Couch", [| ObjectVariant("LongCouch", 1, 1, 4, 4) |], Node AgainstTheLeftWall, Option.None)
 
     let intRow =
-        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
+        DataTableRow("1", [| ObjectVariant(1, 1, 4, 1, 4); ObjectVariant(2, 1, 1, 1, 0) |], Node AgainstTheLeftWall, Option.None)
 
     let floatRow =
-        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheWall, Option.None)
+        DataTableRow("1.0", [| ObjectVariant(1.0, 1, 4, 1, 4); ObjectVariant(2.0, 1, 1, 1, 0) |], Node AgainstTheLeftWall, Option.None)
 
     let dataTableOfLengthOne = DataTable([| couchRow |])
     let dataTableOfLengthOneInstanceOne = DataTable([| flowerpotRow |])
@@ -48,8 +48,21 @@ module Cell =
                 let i = index / roomLength
                 let j = index % roomLength
 
-                if i = 0 || i = roomWidth - 1 || j = 0 || j = roomLength - 1 then
-                    AgainstTheWall
+                if j = 0 && i <> roomWidth - 1 && i <> 0 then
+                    AgainstTheLeftWall
+                elif i = 0 && j <> 0 && j <> roomLength - 1 then
+                    AgainstTheTopWall
+                elif j = roomLength - 1 && i <> 0 && i <> roomWidth - 1 then
+                    AgainstTheLeftWall
+                elif i = roomWidth - 1 && j <> 0 && j <> roomLength - 1 then
+                    AgainstTheLeftWall
+                elif
+                    (i = 0 && j = 0)
+                    || (i = 0 && j = roomLength - 1)
+                    || (i = roomWidth - 1 && j = roomLength - 1)
+                    || (i = roomWidth - 1 && j = 0)
+                then
+                    Corner
                 else
                     NonOccupied)
 
@@ -110,7 +123,7 @@ module Room =
 
             for i in cellRowIndex - instance.FreeCellsOnTheTop .. cellRowIndex + instance.FreeCellsOnTheBottom do
                 for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do
-                    roomToChange[i, j] <- instance.Instance
+                    roomToChange[i, j] <- instance.Variant
 
     let placementFunctionForSample1Room () = placementFunction roomSample1
     let placementFunctionForSample2Room () = placementFunction roomSample2

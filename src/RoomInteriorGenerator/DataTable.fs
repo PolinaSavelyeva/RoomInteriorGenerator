@@ -14,7 +14,11 @@ type LeafPlacementRule =
 /// Enumerates node placement rules for objects to be placed in the room.
 /// </summary>
 type NodePlacementRule =
-    | AgainstTheWall
+    | AgainstTheLeftWall
+    | AgainstTheRightWall
+    | AgainstTheTopWall
+    | AgainstTheBottomWall
+    | InTheCorner
     | None
 
 /// <summary>
@@ -28,14 +32,14 @@ type Rule =
 /// Represents a variant of an object with specific instance data and dimensions.
 /// </summary>
 type ObjectVariant<'Value> =
-    val Instance: 'Value
+    val Variant: 'Value
     val FreeCellsOnTheRight: int
     val FreeCellsOnTheLeft: int
     val FreeCellsOnTheTop: int
     val FreeCellsOnTheBottom: int
 
     new(instance, left, right, top, bottom) =
-        { Instance = instance
+        { Variant = instance
           FreeCellsOnTheRight = left
           FreeCellsOnTheLeft = right
           FreeCellsOnTheTop = top

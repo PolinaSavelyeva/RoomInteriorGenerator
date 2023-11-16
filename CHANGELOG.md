@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Add left,right,top and bottom types of wall cells
+
+### Fixed
+- Fix typos and misnaming
+
 ## [1.0.0-alpha5] - 2023-11-15
 
 ### Fixed

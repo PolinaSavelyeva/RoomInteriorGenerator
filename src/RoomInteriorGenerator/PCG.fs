@@ -47,16 +47,40 @@ let findAvailablePlaceForObject (cellGrid: CellGrid) (selectedObjectRow: DataTab
             match selectedObjectRow.PlacementRule with
             | Node(rule) ->
                 match rule with
-                | NodePlacementRule.AgainstTheWall ->
+                | NodePlacementRule.AgainstTheBottomWall ->
                     (fun cell ->
                         match cell with
-                        | AgainstTheWall -> true
+                        | AgainstTheBottomWall -> true
+                        | _ -> false)
+                | NodePlacementRule.AgainstTheLeftWall ->
+                    (fun cell ->
+                        match cell with
+                        | AgainstTheLeftWall -> true
+                        | _ -> false)
+                | NodePlacementRule.AgainstTheRightWall ->
+                    (fun cell ->
+                        match cell with
+                        | AgainstTheRightWall -> true
+                        | _ -> false)
+                | NodePlacementRule.AgainstTheTopWall ->
+                    (fun cell ->
+                        match cell with
+                        | AgainstTheTopWall -> true
+                        | _ -> false)
+                | NodePlacementRule.InTheCorner ->
+                    (fun cell ->
+                        match cell with
+                        | Corner -> true
                         | _ -> false)
                 | None ->
                     (fun cell ->
                         match cell with
                         | NonOccupied
-                        | AgainstTheWall -> true
+                        | AgainstTheBottomWall
+                        | AgainstTheLeftWall
+                        | AgainstTheRightWall
+                        | AgainstTheTopWall
+                        | Corner -> true
                         | _ -> false)
             | Leaf _ ->
                 (fun cell ->
