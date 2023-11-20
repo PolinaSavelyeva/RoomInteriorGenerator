@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.1] - 2023-11-20
 
 ### Fixed
 - Fix right and left collider initializing
@@ -125,7 +125,8 @@
 
 ### Added
 - Add basic logic
-[Unreleased]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/releases/tag/v1.0.0
 [1.0.0-beta2]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/releases/tag/v1.0.0-beta2
 [1.0.0-beta1]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/releases/tag/v1.0.0-beta1
