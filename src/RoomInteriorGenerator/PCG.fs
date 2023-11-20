@@ -23,9 +23,9 @@ let selectObjectToPlace (dataTable: DataTable<'Value>) randomIntGeneratorWithSee
     let dataTableObjectVariantIndex =
         randomIntGeneratorWithSeed 0 objectToPlace.LengthOfVariantsArray
 
-    let objectToPlaceInstance = objectToPlace.Variants[dataTableObjectVariantIndex]
+    let objectToPlaceVariant = objectToPlace.Variants[dataTableObjectVariantIndex]
 
-    objectToPlace, objectToPlaceInstance, dataTableObjectIndex, dataTableObjectVariantIndex
+    objectToPlace, objectToPlaceVariant, dataTableObjectIndex, dataTableObjectVariantIndex
 
 /// <summary>
 /// Finds an available place for a selected object.
@@ -200,9 +200,34 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 | Anywhere -> 1, 1, 1, 1
             | _ -> failwith "Leaf were expected as input type."
 
-        for i in parentCellRowIndex - parentVariant.FreeCellsOnTheTop - occupyRadius * top .. parentCellRowIndex + parentVariant.FreeCellsOnTheBottom + occupyRadius * bottom do
-            for j in parentCellColumnIndex - parentVariant.FreeCellsOnTheLeft - occupyRadius * left .. parentCellColumnIndex + parentVariant.FreeCellsOnTheRight + occupyRadius * right do
-                if not (i < 0 || i >= cellGrid.Width || j < 0 || j >= cellGrid.Length || cellGrid.IsOccupied(i, j)) then
+        let iStartIndex =
+            parentCellRowIndex - parentVariant.FreeCellsOnTheTop - occupyRadius * top
+
+        let iFinishIndex =
+            parentCellRowIndex + parentVariant.FreeCellsOnTheBottom + occupyRadius * bottom
+
+        let jStartIndex =
+            parentCellColumnIndex - parentVariant.FreeCellsOnTheLeft - occupyRadius * left
+
+        let jFinishIndex =
+            parentCellColumnIndex + parentVariant.FreeCellsOnTheRight + occupyRadius * right
+
+        for i in iStartIndex..iFinishIndex do
+            for j in jStartIndex..jFinishIndex do
+                if
+                    not (
+                        i < 0
+                        || i >= cellGrid.Width
+                        || j < 0
+                        || j >= cellGrid.Length
+                        || cellGrid.IsOccupied(i, j)
+                        || (i = iStartIndex && j = jStartIndex) // Get rid of cells in the corners
+                        || (i = iStartIndex && j = jFinishIndex)
+                        || (i = iFinishIndex && j = jStartIndex)
+                        || (i = iFinishIndex && j = jFinishIndex)
+                    )
+                then
+
                     cellGrid.MakeOccupiedForChildren(i, j)
 
     let rec inner
@@ -255,7 +280,7 @@ let generateInterior (cellGrid: CellGrid) (dataTable: DataTable<'Value>) (maximu
                 else
                     inner stack currentParentObjectVariant currentParentPlace currentDataTable (amountOfObjectsToBePlaced - 1)
             else
-                if objectRow.Variants.IsEmpty || objectRow.LengthOfVariantsArray = 1 then
+                if objectRow.LengthOfVariantsArray = 1 then
                     currentDataTable.Delete dataTableObjectIndex
                 else
                     objectRow.Variants.Delete dataTableVariantIndex

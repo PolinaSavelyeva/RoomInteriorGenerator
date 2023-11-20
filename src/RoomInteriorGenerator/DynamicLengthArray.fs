@@ -35,7 +35,7 @@ type DynamicLengthArray<'Value> =
     /// <summary>
     /// Restores the array length to its original length.
     /// </summary>
-    member this.Restore = this.Length <- this.Data.Length - 1
+    member this.Restore = this.Length <- this.Data.Length
 
     /// <summary>
     /// Checks if the array is empty.
