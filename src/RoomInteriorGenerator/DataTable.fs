@@ -40,8 +40,8 @@ type ObjectVariant<'Value> =
 
     new(instance, left, right, top, bottom) =
         { Variant = instance
-          FreeCellsOnTheRight = left
-          FreeCellsOnTheLeft = right
+          FreeCellsOnTheRight = right
+          FreeCellsOnTheLeft = left
           FreeCellsOnTheTop = top
           FreeCellsOnTheBottom = bottom }
 

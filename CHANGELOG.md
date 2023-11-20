@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Fix right and left collider initializing
+
 ## [1.0.0] - 2023-11-20
 
 ### Fixed
