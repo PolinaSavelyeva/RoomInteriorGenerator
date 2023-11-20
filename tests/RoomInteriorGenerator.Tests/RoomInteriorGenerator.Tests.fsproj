@@ -17,6 +17,7 @@
         <Compile Include="Room.fs" />
         <Compile Include="PCG.fs" />
         <Compile Include="Main.fs" />
+        <Content Include="Area.txt" />
     </ItemGroup>
         <ItemGroup>
           <PackageReference Include="Expecto.FsCheck" Version="9.0.4" />
