@@ -5,19 +5,19 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("RoomInteriorGenerator")>]
 [<assembly: AssemblyProductAttribute("RoomInteriorGenerator")>]
 [<assembly: AssemblyVersionAttribute("1.0.0")>]
-[<assembly: AssemblyMetadataAttribute("ReleaseDate","2023-11-16T00:00:00.0000000+03:00")>]
+[<assembly: AssemblyMetadataAttribute("ReleaseDate","2023-11-20T00:00:00.0000000+03:00")>]
 [<assembly: AssemblyFileVersionAttribute("1.0.0")>]
 [<assembly: AssemblyInformationalVersionAttribute("1.0.0")>]
-[<assembly: AssemblyMetadataAttribute("ReleaseChannel","beta")>]
-[<assembly: AssemblyMetadataAttribute("GitHash","ca01ab1cfec7e57748cddc91c0e8a5aebf78a911")>]
+[<assembly: AssemblyMetadataAttribute("ReleaseChannel","release")>]
+[<assembly: AssemblyMetadataAttribute("GitHash","10a5475257d5202c6708ebd50e898d666b65e9ba")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "RoomInteriorGenerator"
     let [<Literal>] AssemblyProduct = "RoomInteriorGenerator"
     let [<Literal>] AssemblyVersion = "1.0.0"
-    let [<Literal>] AssemblyMetadata_ReleaseDate = "2023-11-16T00:00:00.0000000+03:00"
+    let [<Literal>] AssemblyMetadata_ReleaseDate = "2023-11-20T00:00:00.0000000+03:00"
     let [<Literal>] AssemblyFileVersion = "1.0.0"
     let [<Literal>] AssemblyInformationalVersion = "1.0.0"
-    let [<Literal>] AssemblyMetadata_ReleaseChannel = "beta"
-    let [<Literal>] AssemblyMetadata_GitHash = "ca01ab1cfec7e57748cddc91c0e8a5aebf78a911"
+    let [<Literal>] AssemblyMetadata_ReleaseChannel = "release"
+    let [<Literal>] AssemblyMetadata_GitHash = "10a5475257d5202c6708ebd50e898d666b65e9ba"
