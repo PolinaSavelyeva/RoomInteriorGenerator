@@ -81,7 +81,7 @@ The final result:
 
 ![Room](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/Room.png)
 
-Take a look at the [Time-Reactor](https://github.com/RuslanBeresnev/Time-Reactor-Game) game to see all the steps of package implementation.
+Take a look at the [Time-Reactor-Game](https://github.com/RuslanBeresnev/Time-Reactor-Game) to see all the steps of package implementation.
 
 ## Requirements
 
