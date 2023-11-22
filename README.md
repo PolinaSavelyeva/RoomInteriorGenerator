@@ -1,161 +1,96 @@
 # RoomInteriorGenerator
 
-[Enter useful description for RoomInteriorGenerator]
+[![NuGet Badge](https://buildstats.info/nuget/RoomInteriorGenerator)](https://www.nuget.org/packages/RoomInteriorGenerator/) 
 
----
+RoomInteriorGenerator is a .NET library that helps developers to create game environments. It allows you to focus only on defining different objects and hierarchical rules between them instead of an arragment algorithm.
 
-## Builds
+##  Documentation
 
-GitHub Actions |
-:---: |
-[![GitHub Actions](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/workflows/Build%20main/badge.svg)](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/actions?query=branch%3Amain) |
-[![Build History](https://buildstats.info/github/chart/PolinaSavelyeva/RoomInteriorGenerator)](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/actions?query=branch%3Amain) |
+See the [GitHub pages](https://polinasavelyeva.github.io/RoomInteriorGenerator/) for the API reference and more information.
 
-## NuGet
+## Overview
 
-Package | Stable | Prerelease
---- | --- | ---
-RoomInteriorGenerator | [![NuGet Badge](https://buildstats.info/nuget/RoomInteriorGenerator)](https://www.nuget.org/packages/RoomInteriorGenerator/) | [![NuGet Badge](https://buildstats.info/nuget/RoomInteriorGenerator?includePreReleases=true)](https://www.nuget.org/packages/RoomInteriorGenerator/)
+The generation process is based on several structures:
 
----
+- **DataTable**: Lists objects and the rules between them. Consists of several "columns": object name, object variants to choose from, rules describing the behaviour of the object and the expected amount of free space around it, and possible child objects that can be placed around the parent.
+- **Cell**: Cell defines the smallest possible unit of a room for arranging furniture. It has several basic states such as Occupied, NonOccupied or AgainstTheWall, which can be extended to give a more accurate furnishing result.
+- **CellGrid**: Describes the available room space using cells and their positions.
+ngth.
+- **Room**: Encapsulates a room using its width, height, floor number as seed for random generator, placement function and data table. 
 
-### Developing
+Take a look at a simple code example where we want chairs to stand around the table and couches to stand near the bottom wall. First, we'll create data table rows for all the furniture we want to use, and then create the data table itself:
 
-Make sure the following **requirements** are installed on your system:
+```fsharp
+let chairLeftRow =
+    DataTableRow("Chair", [| ObjectVariant("WhiteChair", 1, 1, 1, 1); ObjectVariant("BlackChair", 1, 1, 1, 1); ObjectVariant("OrangeChair", 1, 1, 1, 1) |], Leaf LeftTo, Option.None)
 
-- [dotnet SDK](https://www.microsoft.com/net/download/core) 6.0 or higher
+let couchRow =
+    DataTableRow("Couch", [| ObjectVariant("LongCouch", 3, 3, 0, 0) |], Node AgainstTheBottomWall, Option.None)
+    
+let tableRow =
+     DataTableRow( "Table", [| ObjectVariant("DinnerTable", 2, 2, 2, 2); ObjectVariant("OfficeTable", 2, 2, 3, 3) |],  Node None, Some [| chairLeftRow; chairRightRow; chairBehindRow; chairInFrontOfRow |])
 
+let table = DataTable([| chairLeftRow; tableRow; couchRow |])
+```
+
+Our placement function will replace the array values with the selected object variant name:
+
+```fsharp
+let arrayToChange = Array2D.init width length (fun _ _ -> "None")
+
+let placementFunction =
+
+    fun (_: DataTable.DataTableRow<'Value>) (instance: DataTable.ObjectVariant<'Value>) cellRowIndex cellColumnIndex ->
+        for i in cellRowIndex - instance.FreeCellsOnTheTop .. cellRowIndex + instance.FreeCellsOnTheBottom do
+            for j in cellColumnIndex - instance.FreeCellsOnTheLeft .. cellColumnIndex + instance.FreeCellsOnTheRight do
+                arrayToChange[i, j] <- instance.Variant
+
+let room = Room(length, width, 291, table)    
+room.GenerateInterior maximumAmountOfObjects placementFunction
+```
+
+After the visualising of the array, we have the following result, where tables are green and blue, chairs are black, white and orange and couches are red:
+
+![Plot](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/withoutcorners.png)
+
+
+##  Unity Example
+
+First, add the RoomInteriorGenerator package to your Unity project when you can open it in your desired script. I fill the data table in the inspector and add the current script to the new GameObject. GameObject should be in the top left corner of your room. GameObject will be the coordinate origin for all furniture placement, so make sure you set the x and z axis directions correctly. Also, all the prefabs you want to place should have (0,0,0) position and 0 degrees y-rotation (depending on your GameObject directions this may be different). Be sure to check the object's pivot point, usually it should be in the centre of your object. This will help you to get the most expected result.
+
+![Inspector](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/Inspector.png)
+
+The main body of my script looks like this:
+
+```csharp
+private void Start()
+{
+    var rows = dataTable.Select(row => row.ToDataTableRow()).ToArray();
+    var dataTableFs = new DataTable.DataTable<GameObject>(rows);
+    var room = new Room<GameObject>(roomLength, roomWidth, floorNumber, dataTableFs);
+    var tupleFunction =
+        FuncConvert.ToFSharpFunc<Tuple<DataTable.DataTableRow<GameObject>, DataTable.ObjectVariant<GameObject>, int, int>>(
+                t => PlaceObject(t.Item1, t.Item2, t.Item3, t.Item4));
+    var placementFunction = FuncConvert.FuncFromTupled(tupleFunction);
+
+    room.GenerateInterior(maximumAmountOfObjects, placementFunction);
+}
+```
+
+The final result:
+
+![Room](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/Room.png)
+
+Take a look at the [Time-Reactor-Game](https://github.com/RuslanBeresnev/Time-Reactor-Game) to see all the steps of package implementation.
+
+## Requirements
+
+Make sure the following requirements are installed on your system:
+
+- [dotnet SDK](https://www.microsoft.com/net/download/core) 3.0 or higher (recommended 6.0+),
+- [Mono](http://www.mono-project.com/) if you're on Linux or macOS
 or
+- [VSCode Dev Container](https://code.visualstudio.com/docs/remote/containers).
 
-- [VSCode Dev Container](https://code.visualstudio.com/docs/remote/containers)
-
-
----
-
-### Environment Variables
-
-- `CONFIGURATION` will set the [configuration](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build?tabs=netcore2x#options) of the dotnet commands.  If not set, it will default to Release.
-  - `CONFIGURATION=Debug ./build.sh` will result in `-c` additions to commands such as in `dotnet build -c Debug`
-- `ENABLE_COVERAGE` Will enable running code coverage metrics.  AltCover can have [severe performance degradation](https://github.com/SteveGilham/altcover/issues/57) so code coverage evaluation are disabled by default to speed up the feedback loop.
-  - `ENABLE_COVERAGE=1 ./build.sh` will enable code coverage evaluation
-
-
----
-
-### Building
-
-
-```sh
-> build.cmd <optional buildtarget> // on windows
-$ ./build.sh  <optional buildtarget>// on unix
-```
-
-The bin of your library should look similar to:
-
-```
-$ tree src/RoomInteriorGenerator/bin/
-src/RoomInteriorGenerator/bin/
-└── Debug
-    └── net6.0
-        ├── RoomInteriorGenerator.deps.json
-        ├── RoomInteriorGenerator.dll
-        ├── RoomInteriorGenerator.pdb
-        └── RoomInteriorGenerator.xml
-
-```
-
----
-
-### Build Targets
-
-- `Clean` - Cleans artifact and temp directories.
-- `DotnetRestore` - Runs [dotnet restore](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-restore?tabs=netcore2x) on the [solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2019).
-- [`DotnetBuild`](#Building) - Runs [dotnet build](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build?tabs=netcore2x) on the [solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2019).
-- `FSharpAnalyzers` - Runs [BinaryDefense.FSharp.Analyzers](https://github.com/BinaryDefense/BinaryDefense.FSharp.Analyzers).
-- `DotnetTest` - Runs [dotnet test](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test?tabs=netcore21) on the [solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2019).
-- `GenerateCoverageReport` - Code coverage is run during `DotnetTest` and this generates a report via [ReportGenerator](https://github.com/danielpalme/ReportGenerator).
-- `ShowCoverageReport` - Shows the report generated in `GenerateCoverageReport`.
-- `WatchTests` - Runs [dotnet watch](https://docs.microsoft.com/en-us/aspnet/core/tutorials/dotnet-watch?view=aspnetcore-3.0) with the test projects. Useful for rapid feedback loops.
-- `GenerateAssemblyInfo` - Generates [AssemblyInfo](https://docs.microsoft.com/en-us/dotnet/api/microsoft.visualbasic.applicationservices.assemblyinfo?view=netframework-4.8) for libraries.
-- `DotnetPack` - Runs [dotnet pack](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-pack). This includes running [Source Link](https://github.com/dotnet/sourcelink).
-- `SourceLinkTest` - Runs a Source Link test tool to verify Source Links were properly generated.
-- `PublishToNuGet` - Publishes the NuGet packages generated in `DotnetPack` to NuGet via [paket push](https://fsprojects.github.io/Paket/paket-push.html). Runs only from `Github Actions`.
-- `GitRelease` - Creates a commit message with the [Release Notes](https://fake.build/apidocs/v5/fake-core-releasenotes.html) and a git tag via the version in the `Release Notes`.
-- `GitHubRelease` - Publishes a [GitHub Release](https://help.github.com/en/articles/creating-releases) with the Release Notes and any NuGet packages. Runs only from `Github Actions`.
-- `FormatCode` - Runs [Fantomas](https://github.com/fsprojects/fantomas) on the solution file.
-- `CheckFormatCode` - Runs [Fantomas --check](https://fsprojects.github.io/fantomas/docs/end-users/FormattingCheck.html) on the solution file.
-- `BuildDocs` - Generates [Documentation](https://fsprojects.github.io/FSharp.Formatting) from `docsSrc` and the [XML Documentation Comments](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/) from your libraries in `src`.
-- `WatchDocs` - Generates documentation and starts a webserver locally.  It will rebuild and hot reload if it detects any changes made to `docsSrc` files, or libraries in `src`.
-
----
-
-
-### Releasing
-
-- [Start a git repo with a remote](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
-
-```sh
-git init
-git add .
-git commit -m "Scaffold"
-git branch -M main
-git remote add origin https://github.com/PolinaSavelyeva/RoomInteriorGenerator.git
-git push -u origin main
-```
-
-- [Create your NuGeT API key](https://docs.microsoft.com/en-us/nuget/nuget-org/publish-a-package#create-api-keys)
-    - Add your NuGet API key as repository secret NUGET_TOKEN to [Actions secrets](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/settings/secrets/actions)
-
-- Then update the `CHANGELOG.md` with an "Unreleased" section containing release notes for this version, in [KeepAChangelog](https://keepachangelog.com/en/1.1.0/) format.
-
-NOTE: Its highly recommend to add a link to the Pull Request next to the release note that it affects. The reason for this is when the `RELEASE` target is run, it will add these new notes into the body of git commit. GitHub will notice the links and will update the Pull Request with what commit referenced it saying ["added a commit that referenced this pull request"](https://github.com/TheAngryByrd/MiniScaffold/pull/179#ref-commit-837ad59). Since the build script automates the commit message, it will say "Bump Version to x.y.z". The benefit of this is when users goto a Pull Request, it will be clear when and which version those code changes released. Also when reading the `CHANGELOG`, if someone is curious about how or why those changes were made, they can easily discover the work and discussions.
-
-Here's an example of adding an "Unreleased" section to a `CHANGELOG.md` with a `0.1.0` section already released.
-
-```markdown
-## [Unreleased]
-
-### Added
-- Does cool stuff!
-
-### Fixed
-- Fixes that silly oversight
-
-## [0.1.0] - 2017-03-17
-First release
-
-### Added
-- This release already has lots of features
-
-[Unreleased]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/PolinaSavelyeva/RoomInteriorGenerator/releases/tag/v0.1.0
-```
-
-- You can then use the `GitRelease` target, specifying the version number either in the `RELEASE_VERSION` environment
-  variable, or else as a parameter after the target name.  This will:
-  - update `CHANGELOG.md`, moving changes from the `Unreleased` section into a new `0.2.0` section
-    - if there were any prerelease versions of 0.2.0 in the changelog, it will also collect their changes into the final 0.2.0 entry
-  - make a commit bumping the version:  `Bump version to 0.2.0` and adds the new changelog section to the commit's body
-  - push a git tag
-
-macOS/Linux Parameter:
-
-```sh
-./build.sh Release 0.2.0
-```
-
-macOS/Linux Environment Variable:
-
-```sh
-RELEASE_VERSION=0.2.0 ./build.sh Release
-```
-
-- The [Github Action](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/main/.github/workflows/publish.yml) will handle the new tag:
-  - publish the package to NuGet
-  - create a GitHub release for that git tag, upload release notes and NuGet packages to GitHub
-
-
-### Releasing Documentation
-
-- Set Source for "Build and deployment" on [GitHub Pages](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/settings/pages) to `GitHub Actions`.
-- Documentation is auto-deployed via [Github Action](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/main/.github/workflows/fsdocs-gh-pages.yml) to [Your GitHub Page](https://PolinaSavelyeva.github.io/RoomInteriorGenerator/)
+### Template
+To find more building and running options take a look at the [MiniScaffold](https://github.com/TheAngryByrd/MiniScaffold) template.
