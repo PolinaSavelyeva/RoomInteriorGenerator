@@ -1,6 +1,7 @@
 # RoomInteriorGenerator
 
 [![NuGet Badge](https://buildstats.info/nuget/RoomInteriorGenerator)](https://www.nuget.org/packages/RoomInteriorGenerator/) 
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/PolinaSavelyeva/RoomInteriorGenerator/build.yml)
 
 RoomInteriorGenerator is a .NET library that helps developers to create game environments. It allows you to focus only on defining different objects and hierarchical rules between them instead of an arragment algorithm.
 
