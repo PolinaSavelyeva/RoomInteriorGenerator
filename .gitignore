@@ -274,3 +274,4 @@ coverage.*.xml
 tmp/
 temp/
 .fsdocs
+.DS_Store

@@ -8,7 +8,7 @@
     --fsdocs-pre-border-color: #d8d8d8;
     --fsdocs-pre-border-color-top: #e3e3e3;
     --fsdocs-pre-background-color: #f3f4f7;
-    --fsdocs-pre-color: #8e0e2b;
+    --fsdocs-pre-color: #292929;
     --fsdocs-table-pre-background-color: #fff7ed;
     --fsdocs-table-pre-color: #837b79;
 
@@ -40,4 +40,6 @@
     --fsdocs-code-preprocessor-color: #af75c1;
     --fsdocs-code-fsioutput-color: #808080;
     --fsdocs-code-tooltip-color: #d1d1d1;
+
+    --fsdocs-content-text-color: #111;
 }

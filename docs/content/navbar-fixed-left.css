@@ -1,91 +1,77 @@
-/* CSS for Bootstrap 5 Fixed Left Sidebar Navigation */
+body {
+    padding-top: 90px;
+}
 
-
-
-@media (min-width: 992px){
-
+@media (min-width: 768px) {
     body {
-        padding-left: 300px;
-        padding-right: 60px;
+        padding-top: 0;
     }
+}
 
-    #fsdocs-logo {
-        width:140px;
-        height:140px;
-        margin:10px 0px 0px 0px;
-        border-style:none;
+@media (min-width: 768px) {
+    body {
+        margin-left: 252px;
     }
-    
+}
+.navbar {
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: none;
+}
+.navbar.fixed-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+.navbar-nav .nav-link {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
 
-    nav.navbar {
-        position: fixed;
-        left: 0;
-        width: 300px;
+@media (min-width: 768px) {
+    .navbar.fixed-left {
         bottom: 0;
-        top: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        display: block;
-        border-right: 1px solid #cecece;
+        width: 252px;
+        flex-flow: column nowrap;
+        align-items: flex-start;
     }
 
-    nav.navbar>.container {
-        flex-direction: column;
-        padding: 0;
+        .navbar.fixed-left .navbar-collapse {
+            flex-grow: 0;
+            flex-direction: column;
+            width: 100%;
+        }
+
+            .navbar.fixed-left .navbar-collapse .navbar-nav {
+                flex-direction: column;
+                width: 100%;
+            }
+
+                .navbar.fixed-left .navbar-collapse .navbar-nav .nav-item {
+                    width: 100%;
+                }
+
+                    .navbar.fixed-left .navbar-collapse .navbar-nav .nav-item .dropdown-menu {
+                        top: 0;
+                    }
+}
+
+@media (min-width: 768px) {
+    .navbar.fixed-left {
+        right: auto;
     }
 
-    nav.navbar .navbar-nav {
-        flex-direction: column;
-    }
-    nav.navbar .navbar-collapse {
-        width: 100%;
-    }
+        .navbar.fixed-left .navbar-nav .nav-item .dropdown-toggle:after {
+            border-top: 0.3em solid transparent;
+            border-left: 0.3em solid;
+            border-bottom: 0.3em solid transparent;
+            border-right: none;
+            vertical-align: baseline;
+        }
 
-    nav.navbar .navbar-nav {
-        width: 100%;
-    }
-
-    nav.navbar .navbar-nav .dropdown-menu {
-        position: static;
-        display: block;
-    }
-
-    nav.navbar .dropdown {
-        margin-bottom: 5px;
-        font-size: 14px;
-    }
-
-    nav.navbar .dropdown-item {
-        white-space: normal;
-        font-size: 14px;
-        vertical-align: middle;
-    }
-
-    nav.navbar .dropdown-item img {
-        margin-right: 5px;
-    }
-
-    nav.navbar .dropdown-toggle {
-        cursor: default;
-    }
-
-    nav.navbar .dropdown-menu {
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-    }
-
-    nav.navbar .dropdown-toggle:not(#bd-theme)::after  {
-        display: none;
-    } 
-
-    .dropdown-menu[data-bs-popper] {
-        top: auto;
-        left: auto;
-        margin-top: auto;
-    }
-
-    .nav-link:focus, .nav-link:hover {
-        color: auto;
-    }
+        .navbar.fixed-left .navbar-nav .nav-item .dropdown-menu {
+            left: 100%;
+        }
 }

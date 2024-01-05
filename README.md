@@ -3,7 +3,7 @@
 [![NuGet Badge](https://buildstats.info/nuget/RoomInteriorGenerator)](https://www.nuget.org/packages/RoomInteriorGenerator/) 
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/PolinaSavelyeva/RoomInteriorGenerator/build.yml)
 
-RoomInteriorGenerator is a .NET library that helps developers to create game environments. It allows you to focus only on defining different objects and hierarchical rules between them instead of an arragment algorithm.
+RoomInteriorGenerator is a .NET library that helps developers to create game environments. It allows you to focus only on defining different objects and hierarchical rules between them instead of an arrangement algorithm.
 
 ##  Documentation
 
@@ -16,7 +16,6 @@ The generation process is based on several structures:
 - **DataTable**: Lists objects and the rules between them. Consists of several "columns": object name, object variants to choose from, rules describing the behaviour of the object and the expected amount of free space around it, and possible child objects that can be placed around the parent.
 - **Cell**: Cell defines the smallest possible unit of a room for arranging furniture. It has several basic states such as Occupied, NonOccupied or AgainstTheWall, which can be extended to give a more accurate furnishing result.
 - **CellGrid**: Describes the available room space using cells and their positions.
-ngth.
 - **Room**: Encapsulates a room using its width, height, floor number as seed for random generator, placement function and data table. 
 
 Take a look at a simple code example where we want chairs to stand around the table and couches to stand near the bottom wall. First, we'll create data table rows for all the furniture we want to use, and then create the data table itself:

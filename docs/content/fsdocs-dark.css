@@ -5,44 +5,45 @@
 /*--------------------------------------------------------------------------*/
 
 :root {
-    --fsdocs-text-color:#d1d1d1;
-    --fsdocs-pre-border-color: #000000;
-    --fsdocs-pre-border-color-top: #070707;
-    --fsdocs-pre-background-color: #1E1E1E;
+    --fsdocs-text-color:#f1f1f1;
+    --fsdocs-pre-border-color: #1c1c1c;
+    --fsdocs-pre-border-color-top: #1c1c1c;
+    --fsdocs-pre-background-color: #1c1c1c;
     --fsdocs-pre-color: #e2e2e2;
-    --fsdocs-table-pre-background-color: #1d1d1d;
+    --fsdocs-table-pre-background-color: #232323;
     --fsdocs-table-pre-color: #c9c9c9;
 
-    --fsdocs-code-strings-color: #ea9a75;
+    --fsdocs-code-strings-color: #f5b3f1;
     --fsdocs-code-printf-color: #E0C57F;
     --fsdocs-code-escaped-color: #EA8675;
     --fsdocs-code-identifiers-color: var(--fsdocs-text-color);
-    --fsdocs-code-module-color: #43AEC6;
-    --fsdocs-code-reference-color: #6a8dd8;
-    --fsdocs-code-value-color: #43AEC6;
-    --fsdocs-code-interface-color: #43AEC6;
-    --fsdocs-code-typearg-color: #43AEC6;
-    --fsdocs-code-disposable-color: #2f798a;
-    --fsdocs-code-property-color: #43AEC6;
-    --fsdocs-code-punctuation-color: #43AEC6;
+    --fsdocs-code-module-color: #bcdfe8;
+    --fsdocs-code-reference-color: #bcdfe8;
+    --fsdocs-code-value-color: #5892a4;
+    --fsdocs-code-interface-color: #5892a4;
+    --fsdocs-code-typearg-color: #5892a4;
+    --fsdocs-code-disposable-color: #3f6975;
+    --fsdocs-code-property-color: #7ed1ea;
+    --fsdocs-code-punctuation-color: #7ed1ea;
     --fsdocs-code-punctuation2-color: #e1e1e1;
     --fsdocs-code-function-color: #e1e1e1;
     --fsdocs-code-function2-color: #43AEC6;
     --fsdocs-code-activepattern-color: #4ec9b0;
     --fsdocs-code-unioncase-color: #4ec9b0;
     --fsdocs-code-enumeration-color: #4ec9b0;
-    --fsdocs-code-keywords-color: #2248c4;
-    --fsdocs-code-comment-color: #329215;
-    --fsdocs-code-operators-color: #af75c1;
-    --fsdocs-code-numbers-color: #96C71D;
+    --fsdocs-code-keywords-color: #f5d8b3;
+    --fsdocs-code-comment-color: #c9e8bc;
+    --fsdocs-code-operators-color: #d8b3f5;
+    --fsdocs-code-numbers-color: #b3f5b7;
     --fsdocs-code-linenumbers-color: #80b0b0;
     --fsdocs-code-mutable-color: #997f0c;
-    --fsdocs-code-inactive-color: #808080;
-    --fsdocs-code-preprocessor-color: #af75c1;
-    --fsdocs-code-fsioutput-color: #808080;
-    --fsdocs-code-tooltip-color: #d1d1d1;
-}
+    --fsdocs-code-inactive-color: #919191;
+    --fsdocs-code-preprocessor-color: #cebce8;
+    --fsdocs-code-fsioutput-color: #919191;
+    --fsdocs-code-tooltip-color: #cdcdcd;
 
+    --fsdocs-content-text-color: #Ffffff;
+}
 
 .fsdocs-source-link img {
     -webkit-filter: grayscale(100%) brightness(1) invert(1); /* Safari 6.0 - 9.0 */
