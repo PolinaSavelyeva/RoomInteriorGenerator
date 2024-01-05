@@ -7,6 +7,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile> <!--https://docs.microsoft.com/en-gb/nuget/reference/msbuild-targets#packagereadmefile -->
         <RepositoryType>git</RepositoryType>
         <Authors>PolinaSavelyeva</Authors>
+        <FsDocsLogoSource>https://fsharp.org/img/logo/fsharp256.png</FsDocsLogoSource>
         <RepositoryUrl>https://github.com/PolinaSavelyeva/RoomInteriorGenerator</RepositoryUrl>
     </PropertyGroup>
     <PropertyGroup>

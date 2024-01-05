@@ -1,4 +1,4 @@
-# Introduction to ImageProcessing
+# Introduction to RoomInteriorGenerator
 
 ---
 
