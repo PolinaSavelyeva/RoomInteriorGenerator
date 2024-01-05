@@ -30,7 +30,7 @@ Download package via [NuGet](https://www.nuget.org/packages/RoomInteriorGenerato
 
 First, add the RoomInteriorGenerator package to your Unity project when you can open it in your desired script. I fill the data table in the inspector and add the current script to the new GameObject. GameObject should be in the top left corner of your room. GameObject will be the coordinate origin for all furniture placement, so make sure you set the x and z axis directions correctly. Also, all the prefabs you want to place should have (0,0,0) position and 0 degrees y-rotation (depending on your GameObject directions this may be different). Be sure to check the object's pivot point, usually it should be in the centre of your object. This will help you to get the most expected result.
 
-![Inspector](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/Inspector.png)
+![Inspector](https://raw.githubusercontent.com/PolinaSavelyeva/RoomInteriorGenerator/sample/Samples/Inspector.png)
 
 The main body of my script looks like this:
 
@@ -51,7 +51,7 @@ private void Start()
 
 The final result:
 
-![Room](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/Room.png)
+![Room](https://raw.githubusercontent.com/PolinaSavelyeva/RoomInteriorGenerator/sample/Samples/Room.png)
 
 Take a look at the [Time-Reactor-Game](https://github.com/RuslanBeresnev/Time-Reactor-Game) to see all the steps of package implementation.
 

@@ -43,6 +43,6 @@ room.GenerateInterior maximumAmountOfObjects placementFunction
 
 After the visualising of the array, we have the following result, where tables are green and blue, chairs are black, white and orange and couches are red:
 
-![Plot](https://github.com/PolinaSavelyeva/RoomInteriorGenerator/blob/sample/Samples/withoutcorners.png)
+![Plot](https://raw.githubusercontent.com/PolinaSavelyeva/RoomInteriorGenerator/sample/Samples/withoutcorners.png)
 
 

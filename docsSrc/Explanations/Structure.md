@@ -27,4 +27,4 @@ Encapsulates a room using its width, height, floor number as seed for random gen
 
 Take a look at the UML class diagram:
 
-![image](https://raw.githubusercontent.com/PolinaSavelyeva/RoomInteriorGenerator/docsSrc/resources/uml.png)
+![image](https://raw.githubusercontent.com/PolinaSavelyeva/RoomInteriorGenerator/main/docsSrc/resources/uml.png)
